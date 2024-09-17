@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{float}
+\usepackage{xcolor}
+\renewcommand{\baselinestretch}{2}
+\usepackage{hyperref}  % Optional for clickable ToC
+\author{Paradiso Emiliano, \quad 1940454}
+\title{\Huge Robotics 2 project \\ \centering \Large \textbf{Robust tracking control based on bounds on dynamic coefficients}}
+
+\titleformat{\chapter}[block]
+  {\normalfont\LARGE\bfseries} 
+  {}                           
+  {0pt}                      
+  {\LARGE}              
+
+\begin{document}
+\maketitle
+\vspace{2cm}
+
+\begin{abstract}
+\hspace*{-0.5cm}In this work, we aim to design a robust control law for tracking a periodic joint space trajectory for a 3R spatial manipulator, based on bounds on its dynamic coefficients. To achieve this, we will derive the dynamic model and extract a linear parameterization in terms of a minimal set of dynamic coefficients. We will then apply robust control theory to the case in exam. Additionally, we will conduct simulations to evaluate the performance of our designed control law, highlighting the main benefits of robust control in contrast to a classic control law such as feedback linearization under both ideal and uncertain conditions.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+\section{Introduction}
+
+
+\section{Conclusion}
+
+
+
+\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{9}
+
+\bibitem{Spong}
+  M. Spong,
+  \emph{“On the robust control of robot manipulators”},
+   IEEE Trans . on Automatic Control, 37(11), 1782-1786, 1992.
+
+\bibitem{Slotine}
+  J.-J. E. Slotine, and W. Li,
+  \emph{“On the adaptive control of robot manipulators”},
+  Int. J. Robot. Research, vol. 6, no. 3, pp. 49-59, Fall 1987.
+   
+\bibitem{De Luca}
+  A. De Luca,
+  \emph{RobustControl},
+ Block of slides 11 RobustControl of Robotics 2
+
+\end{thebibliography}
+
+\end{document}
