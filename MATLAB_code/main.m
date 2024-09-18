@@ -97,7 +97,11 @@ if (clientID>-1)
     K=eye(5);
     qp=zeros(7);    
     dqp=zeros(7);   
-    Jp=zeros(5,7);  
+    Jp=zeros(5,7);
+
+    %CONTROLLER INIZIALIZATION
+    joy = vrjoystick(1);
+
     %%%%%%%%%%%
     %start position
     rs=[+0.42425; -0.00701; +0.83639;pi;+0.64828];
@@ -152,6 +156,18 @@ if (clientID>-1)
 
     while true
 
+
+        [axes,buttons] = read(joy);             %Controller Button increment: A==1; B==2; X==3; Y==4
+        if buttons(1) == 1	                    %Molto grezzo come incrementi, tocca cercare di usare gli analogici
+            dz = dz-0.01;
+        elseif buttons(2) == 1
+            dx = dx+0.01;
+        elseif buttons(3) == 1
+            dx = dx-0.01;
+        elseif buttons(4) == 1
+            dz = dz+0.01;    
+        end
+        
 
         d = str2double(label_d.Text);
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
