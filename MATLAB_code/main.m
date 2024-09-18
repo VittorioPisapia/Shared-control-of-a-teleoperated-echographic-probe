@@ -2,8 +2,6 @@ close all
 clear all
 clc
 
-% COMMENTO PROVA
-
 sim=remApi('remoteApi'); % using the prototype file (remoteApiProto.m)
 sim.simxFinish(-1); % just in case, close all opened connections
 clientID=sim.simxStart('127.0.0.1',19997,true,true,5000,5);
@@ -41,25 +39,28 @@ if (clientID>-1)
     label_K_y = uilabel(gain, "Position",[10, 220, 100 , 22], "Text", "Gain over Ky");
     ef_gainK_y = uieditfield(gain,"numeric", "Position", [10, 190, 50, 22], "Limits", [0, 1000], "Value", 250);
     label_K_z = uilabel(gain, "Position",[10, 160, 100 , 22], "Text", "Gain over Kz");
-    ef_gainK_z = uieditfield(gain, "numeric", "Position", [10, 130, 50, 22], "Limits", [0, 1000], "Value", 75);
+    ef_gainK_z = uieditfield(gain, "numeric", "Position", [10, 130, 50, 22], "Limits", [0, 1000], "Value", 75;
     label_K_phi = uilabel(gain, "Position",[10, 100, 100 , 22], "Text", "Gain over Kphi");
     ef_gainK_phi = uieditfield(gain, "numeric", "Position", [10, 70, 50, 22], "Limits", [0, 1000], "Value", 50);
     label_K_link4pos = uilabel(gain, "Position",[10, 40, 100 , 22], "Text", "Gain over link 4 position on K");
-    ef_gainK_link4pos = uieditfield(gain, "numeric", "Position", [10, 10, 50, 22], "Limits", [0, 1000], "Value", 500);
+    ef_gainK_link4pos = uieditfield(gain, "numeric", "Position", [10, 10, 50, 22], "Limits", [0, 1000], "Value", 250);
     
     label_D_x = uilabel(gain, "Position",[180, 280, 100 , 22], "Text", "Gain over Dx");
     ef_gainD_x = uieditfield(gain, "numeric", "Position", [180, 250, 50, 22], "Limits", [0, 1000], "Value", 500);
     label_D_y = uilabel(gain, "Position",[180, 220, 100 , 22], "Text", "Gain over Dy");
     ef_gainD_y = uieditfield(gain, "numeric", "Position", [180, 190, 50, 22], "Limits", [0, 1000], "Value", 500);
     label_D_z = uilabel(gain, "Position",[180, 160, 100 , 22], "Text", "Gain over Dz");
-    ef_gainD_z = uieditfield(gain, "numeric", "Position", [180, 130, 50, 22], "Limits", [0, 1000], "Value", 650);
+    ef_gainD_z = uieditfield(gain, "numeric", "Position", [180, 130, 50, 22], "Limits", [0, 1000], "Value", 500);
     label_D_phi = uilabel(gain, "Position",[180, 100, 100 , 22], "Text", "Gain over Dphi");
     ef_gainD_phi = uieditfield(gain, "numeric", "Position", [180, 70, 50, 22], "Limits", [0, 1000], "Value", 20);
     label_D_link4pos = uilabel(gain, "Position",[180, 40, 100 , 22], "Text", "Gain over link 4 position on D");
-    ef_gainD_link4pos = uieditfield(gain, "numeric", "Position", [180, 10, 50, 22], "Limits", [0, 1000], "Value", 500);
+    ef_gainD_link4pos = uieditfield(gain, "numeric", "Position", [180, 10, 50, 22], "Limits", [0, 1000], "Value", 650);
     
-    label_Dq_link4pos = uilabel(gain, "Position",[300, 180, 100 , 22], "Text", "Gain over Dq");
-    ef_gainDq_link4pos = uieditfield(gain, "numeric", "Position", [300, 150, 50, 22], "Limits", [0, 600], "Value", 5);
+    label_Dq = uilabel(gain, "Position",[300, 180, 100 , 22], "Text", "Gain over Dq");
+    ef_gainDq = uieditfield(gain, "numeric", "Position", [300, 150, 50, 22], "Limits", [0, 600], "Value", 8);
+    
+    % label_Aq= uilabel(gain, "Position",[300, 100, 100 , 22], "Text", "Gain over Aq");
+    % ef_gainAq= uieditfield(gain, "numeric", "Position", [300, 80, 50, 22], "Limits", [0, 600], "Value", 0);
 
     label_d = uilabel(fig, "Position",[300, 50, 100 , 22], "Text", "0.01");
     label_d_name = uilabel(fig, "Position",[300, 320, 100 , 22], "Text", "Slider Magnitude");
@@ -79,7 +80,7 @@ if (clientID>-1)
     button_left = uibutton(fig, "Position", [50, 200, 50, 50], "Text", "LEFT", "ButtonPushedFcn", @(button_left, event)updateBtn_Left());
     button_right = uibutton(fig, "Position", [150, 200, 50, 50], "Text", "RIGHT", "ButtonPushedFcn", @(button_right, event)updateBtn_Right());
 
-   
+    %Aq=eye(7)*5;
     Dq=eye(7)*5;
     Dr=[500,0,0,0,0;0,500,0,0,0;0,0,650,0,0;0,0,0,20,0;0,0,0,0,500];
     K=[250,0,0,0,0;0,250,0,0,0;0,0,75,0,0;0,0,0,10,0;0,0,0,0,500];
@@ -143,20 +144,21 @@ if (clientID>-1)
            0,0,0,0,ef_gainD_link4pos.Value];
 
 
-        Dq=eye(7)*ef_gainDq_link4pos.Value;
+        Dq=eye(7)*ef_gainDq.Value;
+
+        %Aq=eye(7)*ef_gainAq.Value;
 
         for i=1:7  
              [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_buffer);   
         end
 
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
-        force
-        torque
-        state
+
         dq=(qn-qp)/dt;
         p_e = DKnum(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         ra=TaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7),p_e);
         dr = (ra-rp)/dt;
+        %ddq = (dq-dqp)/dt;
         
         disp('errore');
         e = rd-ra;
@@ -177,7 +179,7 @@ if (clientID>-1)
         u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(K*(rd-ra)-Dr*dr)-Dq*transpose(dq);
         rp = ra;
         qp=qn;
-        dqp=dq;
+        %dqp=dq;
 
 
         for i=1:7
