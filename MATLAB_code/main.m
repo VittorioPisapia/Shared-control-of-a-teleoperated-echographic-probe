@@ -2,6 +2,8 @@ close all
 clear all
 clc
 
+% COMMENTO PROVA
+
 sim=remApi('remoteApi'); % using the prototype file (remoteApiProto.m)
 sim.simxFinish(-1); % just in case, close all opened connections
 clientID=sim.simxStart('127.0.0.1',19997,true,true,5000,5);
