@@ -26,11 +26,13 @@ if (clientID>-1)
     [r,ForceSensor]=sim.simxGetObjectHandle(clientID,'Franka_connection',sim.simx_opmode_blocking);
 
 
-    global dx dy dz d
+    global dx dy dz d ForceZ
     dx = 0;
     dy = 0;
     dz = 0;
     d = 0.05;
+    ForceZ = 0;
+    
 
     %% GUI
     fig = uifigure("Name", "Sliders", "Position", [100, 100, 900, 500]);
@@ -89,25 +91,17 @@ if (clientID>-1)
 
     %%%%%%%%%%%
     %Aq=eye(7)*5;
-    Dq=eye(7)*5;     %------superfluo
-    Dr=[500,0,0,0,0;
-        0,500,0,0,0;
-        0,0,650,0,0;
-        0,0,0,20,0;
-        0,0,0,0,500];%------superfluo
-    K=[250,0,0,0,0;
-        0,250,0,0,0;
-        0,0,75,0,0;
-        0,0,0,10,0;
-        0,0,0,0,500];%------superfluo
-    %rd=rs;
-    %qp=zeros(7);    %------superfluo
-    %dqp=zeros(7);   %------superfluo
-    %Jp=zeros(5,7);  %------superfluo
+    Dq=eye(7)*5;     
+    Dr=eye(5);
+    K=eye(5);
+    qp=zeros(7);    
+    dqp=zeros(7);   
+    Jp=zeros(5,7);  
     %%%%%%%%%%%%
 
     %start position
     rs=[+0.42425; -0.00701; +0.83639;pi;+0.64828];
+    rd=rs;
     
     dr=[0;0;0;0;0];
     rp=[0;0;0;0;0];
@@ -144,7 +138,7 @@ if (clientID>-1)
         sim.simxSetJointForce(clientID,h(i),0,sim.simx_opmode_oneshot);
     end
 
-    %% FORCE SENSOR (serve??)
+    %% FORCE SENSOR 
     [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
 
     %% SIMULATION LOOP
@@ -152,10 +146,13 @@ if (clientID>-1)
     while true
 
         d = str2double(label_d.Text);
+        [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
+        force
 
         if rs(3)+dz < 0        %<----- NUOVO (da provare se funziona)
-            dz=0;  
+            dz=-rs(3);  
         end
+
 
         rd=rs+[dx;dy;dz;0;0];
         rd(4)=str2double(label_phi.Text);
@@ -183,8 +180,6 @@ if (clientID>-1)
              [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_buffer);   
         end
 
-        [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
-
         dq=(qn-qp)/dt;
         p_e = DKnum(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         ra=TaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7),p_e);
@@ -198,7 +193,7 @@ if (clientID>-1)
         % xlabel('t');
         % ylabel('Error Norm');
         % title('Real-time Error Norm');
-        % drawnow;
+        drawnow;
 
         g=get_GravityVector(qn);
         J=JacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
@@ -245,6 +240,7 @@ function updateBtn_Down(check_xy)
         dy = dy-d;
     else 
         dz = dz-d;
+
     end
 end
 
