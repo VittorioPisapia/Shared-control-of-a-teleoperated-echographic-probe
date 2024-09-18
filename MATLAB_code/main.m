@@ -84,7 +84,7 @@ if (clientID>-1)
     button_trajectory = uibutton(bg, "Position", [290, 10, 150, 25], "Text", "EXECUTE TRAJECTORY", "ButtonPushedFcn", @(button_home, event)trajectory_Btn());
 
     button_up = uibutton(fig, "Position", [100, 300, 50, 50], "Text", "UP", "ButtonPushedFcn", @(button_up, event)updateBtn_Up(check_xy));
-    button_down = uibutton(fig, "Position", [100, 100, 50, 50], "Text", "DOWN", "ButtonPushedFcn", @(button_down, event)updateBtn_Down(check_xy,ForceZ, SAFETY_VALUE));
+    button_down = uibutton(fig, "Position", [100, 100, 50, 50], "Text", "DOWN", "ButtonPushedFcn", @(button_down, event)updateBtn_Down(check_xy, SAFETY_VALUE));
     button_left = uibutton(fig, "Position", [50, 200, 50, 50], "Text", "LEFT", "ButtonPushedFcn", @(button_left, event)updateBtn_Left());
     button_right = uibutton(fig, "Position", [150, 200, 50, 50], "Text", "RIGHT", "ButtonPushedFcn", @(button_right, event)updateBtn_Right());
 
@@ -98,8 +98,7 @@ if (clientID>-1)
     qp=zeros(7);    
     dqp=zeros(7);   
     Jp=zeros(5,7);  
-    %%%%%%%%%%%%
-
+    %%%%%%%%%%%
     %start position
     rs=[+0.42425; -0.00701; +0.83639;pi;+0.64828];
     rd=rs;
@@ -108,7 +107,7 @@ if (clientID>-1)
     rp=[0;0;0;0;0];
 
     dt=0.05;
-    e=[0,0,0,0];
+    e=[0,0,0,0,0];
     errors = [];
     iteration = 0;
     dq=zeros(7);
@@ -139,18 +138,26 @@ if (clientID>-1)
         sim.simxSetJointForce(clientID,h(i),0,sim.simx_opmode_oneshot);
     end
 
+    %% SIGNAL STREAMING
+    sim.simxSetFloatSignal(clientID,'error_x',e(1),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'error_y',e(2),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'error_z',e(3),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'error_phi',e(4),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'error_z4',e(5),sim.simx_opmode_streaming);
+
     %% FORCE SENSOR 
     [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
-    ForceZ=force(3);
+    % ForceZ=-force(3);
     %% SIMULATION LOOP
 
     while true
 
+
         d = str2double(label_d.Text);
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
-        force
+        ForceZ=-force(3);
 
-        if rs(3)+dz < 0        %<----- NUOVO (da provare se funziona)
+        if rs(3)+dz < 0   
             dz=-rs(3);  
         end
 
@@ -158,9 +165,6 @@ if (clientID>-1)
         rd=rs+[dx;dy;dz;0;0];
         rd(4)=str2double(label_phi.Text);
 
-        % if rd(3) <=0       %<------ cambiato
-        %     rd(3) =0;
-        % end
 
         % iteration = iteration + 1;
         
@@ -187,8 +191,13 @@ if (clientID>-1)
         dr = (ra-rp)/dt;
         %ddq = (dq-dqp)/dt;
         
-        disp('error');
+        % disp('error');
         e = rd-ra;
+        sim.simxSetFloatSignal(clientID,'error_x',e(1),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'error_y',e(2),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'error_z',e(3),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'error_phi',e(4),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'error_z4',e(5),sim.simx_opmode_streaming);
 
         % errors=[errors,e];
         % xlabel('t');
@@ -235,11 +244,13 @@ function updateBtn_Up(check_xy)
     end
 end
 
-function updateBtn_Down(check_xy, ForceZ,SAFETY_VALUE)
-    global dz dy d 
+function updateBtn_Down(check_xy,SAFETY_VALUE)
+    global dz dy d ForceZ
     if check_xy.Value==1
         dy = dy-d;
     else 
+        disp('Force Z letta')
+        disp(ForceZ);
         if ForceZ<SAFETY_VALUE
             dz = dz-d;
         end
