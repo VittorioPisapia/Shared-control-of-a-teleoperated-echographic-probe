@@ -32,7 +32,8 @@ if (clientID>-1)
     dz = 0;
     d = 0.05;
     ForceZ = 0;
-    
+
+    SAFETY_VALUE = 8;
 
     %% GUI
     fig = uifigure("Name", "Sliders", "Position", [100, 100, 900, 500]);
@@ -83,7 +84,7 @@ if (clientID>-1)
     button_trajectory = uibutton(bg, "Position", [290, 10, 150, 25], "Text", "EXECUTE TRAJECTORY", "ButtonPushedFcn", @(button_home, event)trajectory_Btn());
 
     button_up = uibutton(fig, "Position", [100, 300, 50, 50], "Text", "UP", "ButtonPushedFcn", @(button_up, event)updateBtn_Up(check_xy));
-    button_down = uibutton(fig, "Position", [100, 100, 50, 50], "Text", "DOWN", "ButtonPushedFcn", @(button_down, event)updateBtn_Down(check_xy));
+    button_down = uibutton(fig, "Position", [100, 100, 50, 50], "Text", "DOWN", "ButtonPushedFcn", @(button_down, event)updateBtn_Down(check_xy,ForceZ, SAFETY_VALUE));
     button_left = uibutton(fig, "Position", [50, 200, 50, 50], "Text", "LEFT", "ButtonPushedFcn", @(button_left, event)updateBtn_Left());
     button_right = uibutton(fig, "Position", [150, 200, 50, 50], "Text", "RIGHT", "ButtonPushedFcn", @(button_right, event)updateBtn_Right());
 
@@ -140,7 +141,7 @@ if (clientID>-1)
 
     %% FORCE SENSOR 
     [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
-
+    ForceZ=force(3);
     %% SIMULATION LOOP
 
     while true
@@ -234,13 +235,14 @@ function updateBtn_Up(check_xy)
     end
 end
 
-function updateBtn_Down(check_xy)
-    global dz dy d
+function updateBtn_Down(check_xy, ForceZ,SAFETY_VALUE)
+    global dz dy d 
     if check_xy.Value==1
         dy = dy-d;
     else 
-        dz = dz-d;
-
+        if ForceZ<SAFETY_VALUE
+            dz = dz-d;
+        end
     end
 end
 
