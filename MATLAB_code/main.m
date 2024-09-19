@@ -38,7 +38,7 @@ if (clientID>-1)
     flag_doing_echo = false;
 
     %% GUI
-    fig = uifigure("Name", "Sliders", "Position", [100, 100, 900, 500]);
+    fig = uifigure("Name", "Controller", "Position", [100, 100, 900, 500]);
 
     %%% gains =================================================================
     gain = uipanel(fig, "Title","Gains", "Position",[500, 150, 420, 350]);
@@ -76,9 +76,9 @@ if (clientID>-1)
 
     label_phi = uilabel(fig, "Position",[400, 50, 100 , 22], "Text", "3.14");
     label_phi_name = uilabel(fig, "Position",[400, 320, 100 , 22], "Text", "Phi Angle");
-    slider_phi = uislider(fig, "Position", [400, 100, 200, 3], "Limits", [pi-deg2rad(20), pi+deg2rad(20)],"Value", pi, "ValueChangedFcn",@(slider_phi,event)updateLabel(slider_phi,label_phi), "Orientation", "vertical");
+    slider_phi = uislider(fig, "Position", [400, 100, 200, 3], "Limits", [pi-deg2rad(20), pi],"Value", pi, "ValueChangedFcn",@(slider_phi,event)updateLabel(slider_phi,label_phi), "Orientation", "vertical");
     
-    bg = uibuttongroup(fig, "Title","Tools", "Position",[10, 350, 450, 100]);
+    bg = uibuttongroup(fig, "Title","Tools", "Position",[10, 400, 450, 100]);
     check_xy = uiradiobutton(bg, "Text","Plane XY", "Position",[10, 10, 150, 25], "Value", true); 
     check_xz = uiradiobutton(bg, "Text","Plane XZ", "Position",[10, 40, 150, 25]); 
     button_home = uibutton(bg, "Position", [200, 40, 75, 25], "Text", "HOME", "ButtonPushedFcn", @(button_home, event)updateBtn_Home(slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_phi,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_phi,ef_gainD_link4pos,ef_gainDq,check_xy));
@@ -197,7 +197,9 @@ if (clientID>-1)
             dz = dz+0.001*abs(axes(3));
         end
         if axes(3)<-0.5
-            dz = dz-0.001*abs(axes(3));
+            if ForceZ<SAFETY_VALUE
+                dz = dz-0.001*abs(axes(3));
+            end
         end
         if buttons(8) == 1 %select
             updateBtn_Home(slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_phi,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_phi,ef_gainD_link4pos,ef_gainDq,check_xy);
@@ -324,7 +326,7 @@ function updateBtn_Right()
 end    
 
 function updateBtn_Home(slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_phi,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_phi,ef_gainD_link4pos,ef_gainDq,check_xy)
-    global dx dy dz
+    global dx dy dz flag_doing_echo
     dx = 0;
     dy = 0;
     dz = 0;
@@ -344,23 +346,17 @@ function updateBtn_Home(slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gain
     ef_gainD_link4pos.Value = 650;
     ef_gainDq.Value = 8;
     check_xy.Value = true;
+    flag_doing_echo = false;
+
 end
 
 function updateBtn_Echo(slider_phi,label_phi)
-    global dx dy dz ForceZ  flag_can_echo flag_doing_echo
-    if flag_can_echo
-        if ForceZ >= 5
-            flag_can_echo = false;
-            flag_doing_echo = false;
-        else
-            dz = dz-0.0001;
-            flag_doing_echo = true;
-        end
+    global dx dy dz ForceZ flag_doing_echo
+    if ForceZ >= 5
+        flag_doing_echo = false;
     else
-        dx = 0;
-        dy = 0;
-        dz = 0;
-        flag_can_echo = true;
+        dz = dz-0.0001;
+        flag_doing_echo = true;
     end
 
     % dx = 0;
