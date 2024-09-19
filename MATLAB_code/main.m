@@ -26,7 +26,7 @@ if (clientID>-1)
     [r,ForceSensor]=sim.simxGetObjectHandle(clientID,'Franka_connection',sim.simx_opmode_blocking);
 
 
-    global dx dy dz d ForceZ
+    global dx dy dz d ForceZ flag_can_echo flag_doing_echo
     dx = 0;
     dy = 0;
     dz = 0;
@@ -34,6 +34,8 @@ if (clientID>-1)
     ForceZ = 0;
 
     SAFETY_VALUE = 8;
+    flag_can_echo = true;
+    flag_doing_echo = false;
 
     %% GUI
     fig = uifigure("Name", "Sliders", "Position", [100, 100, 900, 500]);
@@ -80,8 +82,8 @@ if (clientID>-1)
     check_xy = uiradiobutton(bg, "Text","Plane XY", "Position",[10, 10, 150, 25], "Value", true); 
     check_xz = uiradiobutton(bg, "Text","Plane XZ", "Position",[10, 40, 150, 25]); 
     button_home = uibutton(bg, "Position", [200, 40, 75, 25], "Text", "HOME", "ButtonPushedFcn", @(button_home, event)updateBtn_Home(slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_phi,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_phi,ef_gainD_link4pos,ef_gainDq,check_xy));
-    button_echo = uibutton(bg, "Position", [200, 10, 75, 25], "Text", "ECHO", "ButtonPushedFcn", @(button_home, event)updateBtn_Echo(slider_phi,label_phi));
-    button_trajectory = uibutton(bg, "Position", [290, 10, 150, 25], "Text", "EXECUTE TRAJECTORY", "ButtonPushedFcn", @(button_home, event)trajectory_Btn());
+    button_echo = uibutton(bg, "Position", [200, 10, 75, 25], "Text", "ECHO", "ButtonPushedFcn", @(button_echo, event)updateBtn_Echo(slider_phi,label_phi));
+    button_trajectory = uibutton(bg, "Position", [290, 10, 150, 25], "Text", "EXECUTE TRAJECTORY", "ButtonPushedFcn", @(button_trajectory, event)trajectory_Btn());
 
     button_up = uibutton(fig, "Position", [100, 300, 50, 50], "Text", "UP", "ButtonPushedFcn", @(button_up, event)updateBtn_Up(check_xy));
     button_down = uibutton(fig, "Position", [100, 100, 50, 50], "Text", "DOWN", "ButtonPushedFcn", @(button_down, event)updateBtn_Down(check_xy, SAFETY_VALUE));
@@ -159,21 +161,50 @@ if (clientID>-1)
 
     while true
 
+        if flag_doing_echo
+            updateBtn_Echo(slider_phi,label_phi);
+        end
 
-        [axes,buttons] = read(joy);             %Controller Button increment: A==1; B==2; X==3; Y==4
-        if buttons(1) == 1	                    %Molto grezzo come incrementi, tocca cercare di usare gli analogici
-            dz = dz-0.01;
+        % [axes,buttons] = read(joy);             %Controller Button increment: A==1; B==2; X==3; Y==4
+        % if buttons(1) == 1	                    %Molto grezzo come incrementi, tocca cercare di usare gli analogici
+        %     dz = dz-0.01;
+        % end
+        % if buttons(2) == 1
+        %     dx = dx+0.01;
+        % end
+        % if buttons(3) == 1
+        %     dx = dx-0.01;
+        % end
+        % if buttons(4) == 1
+        %     dz = dz+0.01;    
+        % end
+
+        [axes,buttons] = read(joy);
+
+        if axes(1)<-0.1
+            dx = dx-0.001*abs(axes(1));
         end
-        if buttons(2) == 1
-            dx = dx+0.01;
+        if axes(1)>0.1
+            dx = dx+0.001*abs(axes(1));
         end
-        if buttons(3) == 1
-            dx = dx-0.01;
+        if axes(2)<-0.1
+            dy = dy+0.001*abs(axes(2));
         end
-        if buttons(4) == 1
-            dz = dz+0.01;    
+        if axes(2)>0.1
+            dy = dy-0.001*abs(axes(2));
         end
-        
+        if axes(3)>0.05
+            dz = dz+0.001*abs(axes(3));
+        end
+        if axes(3)<-0.5
+            dz = dz-0.001*abs(axes(3));
+        end
+        if buttons(8) == 1 %select
+            updateBtn_Home(slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_phi,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_phi,ef_gainD_link4pos,ef_gainDq,check_xy);
+        end
+        if buttons(4) == 1 %y/triangolo
+            updateBtn_Echo(slider_phi,label_phi); 
+        end
 
         d = str2double(label_d.Text);
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
@@ -316,12 +347,27 @@ function updateBtn_Home(slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gain
 end
 
 function updateBtn_Echo(slider_phi,label_phi)
-    global dx dy dz
-    dx = 0;
-    dy = 0;
-    dz = -0.4;
-    slider_phi.Value = pi;
-    label_phi.Text = '3.14';
+    global dx dy dz ForceZ  flag_can_echo flag_doing_echo
+    if flag_can_echo
+        if ForceZ >= 5
+            flag_can_echo = false;
+            flag_doing_echo = false;
+        else
+            dz = dz-0.0001;
+            flag_doing_echo = true;
+        end
+    else
+        dx = 0;
+        dy = 0;
+        dz = 0;
+        flag_can_echo = true;
+    end
+
+    % dx = 0;
+    % dy = 0;
+    % dz = -0.4;
+    % slider_phi.Value = pi;
+    % label_phi.Text
 end
 
 function updateLabel(slider, label)
