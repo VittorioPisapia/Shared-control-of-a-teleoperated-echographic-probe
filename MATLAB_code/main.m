@@ -148,6 +148,9 @@ if (clientID>-1)
     sim.simxSetFloatSignal(clientID,'error_z',e(3),sim.simx_opmode_streaming);
     sim.simxSetFloatSignal(clientID,'error_phi',e(4),sim.simx_opmode_streaming);
     sim.simxSetFloatSignal(clientID,'error_z4',e(5),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'rd_x',rd(1),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'rd_y',rd(2),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'rd_z',rd(3),sim.simx_opmode_streaming);
 
     %% FORCE SENSOR 
     [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
@@ -160,11 +163,14 @@ if (clientID>-1)
         [axes,buttons] = read(joy);             %Controller Button increment: A==1; B==2; X==3; Y==4
         if buttons(1) == 1	                    %Molto grezzo come incrementi, tocca cercare di usare gli analogici
             dz = dz-0.01;
-        elseif buttons(2) == 1
+        end
+        if buttons(2) == 1
             dx = dx+0.01;
-        elseif buttons(3) == 1
+        end
+        if buttons(3) == 1
             dx = dx-0.01;
-        elseif buttons(4) == 1
+        end
+        if buttons(4) == 1
             dz = dz+0.01;    
         end
         
@@ -214,6 +220,9 @@ if (clientID>-1)
         sim.simxSetFloatSignal(clientID,'error_z',e(3),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'error_phi',e(4),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'error_z4',e(5),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'rd_x',rd(1),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'rd_y',rd(2),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'rd_z',rd(3),sim.simx_opmode_streaming);
 
         % errors=[errors,e];
         % xlabel('t');
