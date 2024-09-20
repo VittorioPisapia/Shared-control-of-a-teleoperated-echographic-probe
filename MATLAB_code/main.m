@@ -48,8 +48,8 @@ if (clientID>-1)
     ef_gainK_y = uieditfield(gain,"numeric", "Position", [10, 190, 50, 22], "Limits", [0, 1000], "Value", 250);
     label_K_z = uilabel(gain, "Position",[10, 160, 100 , 22], "Text", "Gain over Kz");
     ef_gainK_z = uieditfield(gain, "numeric", "Position", [10, 130, 50, 22], "Limits", [0, 1000], "Value", 75);
-    label_K_phi = uilabel(gain, "Position",[10, 100, 100 , 22], "Text", "Gain over Kphi");
-    ef_gainK_phi = uieditfield(gain, "numeric", "Position", [10, 70, 50, 22], "Limits", [0, 1000], "Value", 50);
+    label_K_theta = uilabel(gain, "Position",[10, 100, 100 , 22], "Text", "Gain over Ktheta");
+    ef_gainK_theta = uieditfield(gain, "numeric", "Position", [10, 70, 50, 22], "Limits", [0, 1000], "Value", 50);
     label_K_link4pos = uilabel(gain, "Position",[10, 40, 100 , 22], "Text", "Gain over link 4 position on K");
     ef_gainK_link4pos = uieditfield(gain, "numeric", "Position", [10, 10, 50, 22], "Limits", [0, 1000], "Value", 250);
     
@@ -59,14 +59,20 @@ if (clientID>-1)
     ef_gainD_y = uieditfield(gain, "numeric", "Position", [180, 190, 50, 22], "Limits", [0, 1000], "Value", 500);
     label_D_z = uilabel(gain, "Position",[180, 160, 100 , 22], "Text", "Gain over Dz");
     ef_gainD_z = uieditfield(gain, "numeric", "Position", [180, 130, 50, 22], "Limits", [0, 1000], "Value", 500);
-    label_D_phi = uilabel(gain, "Position",[180, 100, 100 , 22], "Text", "Gain over Dphi");
-    ef_gainD_phi = uieditfield(gain, "numeric", "Position", [180, 70, 50, 22], "Limits", [0, 1000], "Value", 20);
+    label_D_theta = uilabel(gain, "Position",[180, 100, 100 , 22], "Text", "Gain over Dtheta");
+    ef_gainD_theta = uieditfield(gain, "numeric", "Position", [180, 70, 50, 22], "Limits", [0, 1000], "Value", 20);
     label_D_link4pos = uilabel(gain, "Position",[180, 40, 100 , 22], "Text", "Gain over link 4 position on D");
     ef_gainD_link4pos = uieditfield(gain, "numeric", "Position", [180, 10, 50, 22], "Limits", [0, 1000], "Value", 650);
     
     label_Dq = uilabel(gain, "Position",[300, 180, 100 , 22], "Text", "Gain over Dq");
     ef_gainDq = uieditfield(gain, "numeric", "Position", [300, 150, 50, 22], "Limits", [0, 600], "Value", 8);
     
+    label_K_sum = uilabel(gain, "Position",[300, 120, 100 , 22], "Text", "Gain Ksum");
+    ef_gainK_sum = uieditfield(gain, "numeric", "Position", [300, 90, 50, 22], "Limits", [0, 1000], "Value", 0);  
+    label_D_sum = uilabel(gain, "Position",[300, 60, 100 , 22], "Text", "Gain Dsum");
+    ef_gainD_sum = uieditfield(gain, "numeric", "Position", [300, 30, 50, 22], "Limits", [0, 1000], "Value", 0);
+    
+
     % label_Aq= uilabel(gain, "Position",[300, 100, 100 , 22], "Text", "Gain over Aq");
     % ef_gainAq= uieditfield(gain, "numeric", "Position", [300, 80, 50, 22], "Limits", [0, 600], "Value", 0);
 
@@ -74,15 +80,15 @@ if (clientID>-1)
     label_d_name = uilabel(fig, "Position",[300, 320, 100 , 22], "Text", "Slider Magnitude");
     slider_d = uislider(fig, "Position", [300, 100, 200, 3], "Limits", [0.001, 0.2],"Value", 0.01, "ValueChangedFcn",@(slider_d,event)updateLabel(slider_d,label_d), "Orientation", "vertical");
 
-    label_phi = uilabel(fig, "Position",[400, 50, 100 , 22], "Text", "3.14");
-    label_phi_name = uilabel(fig, "Position",[400, 320, 100 , 22], "Text", "Phi Angle");
-    slider_phi = uislider(fig, "Position", [400, 100, 200, 3], "Limits", [pi-deg2rad(20), pi],"Value", pi, "ValueChangedFcn",@(slider_phi,event)updateLabel(slider_phi,label_phi), "Orientation", "vertical");
+    label_theta = uilabel(fig, "Position",[400, 50, 100 , 22], "Text", "3.14");
+    label_theta_name = uilabel(fig, "Position",[400, 320, 100 , 22], "Text", "Theta Angle");
+    slider_theta = uislider(fig, "Position", [400, 100, 200, 3], "Limits", [pi-deg2rad(20), pi],"Value", pi, "ValueChangedFcn",@(slider_theta,event)updateLabel(slider_theta,label_theta), "Orientation", "vertical");
     
     bg = uibuttongroup(fig, "Title","Tools", "Position",[10, 400, 450, 100]);
     check_xy = uiradiobutton(bg, "Text","Plane XY", "Position",[10, 10, 150, 25], "Value", true); 
     check_xz = uiradiobutton(bg, "Text","Plane XZ", "Position",[10, 40, 150, 25]); 
-    button_home = uibutton(bg, "Position", [200, 40, 75, 25], "Text", "HOME", "ButtonPushedFcn", @(button_home, event)updateBtn_Home(slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_phi,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_phi,ef_gainD_link4pos,ef_gainDq,check_xy));
-    button_echo = uibutton(bg, "Position", [200, 10, 75, 25], "Text", "ECHO", "ButtonPushedFcn", @(button_echo, event)updateBtn_Echo(slider_phi,label_phi));
+    button_home = uibutton(bg, "Position", [200, 40, 75, 25], "Text", "HOME", "ButtonPushedFcn", @(button_home, event)updateBtn_Home(slider_theta,label_theta,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy));
+    button_echo = uibutton(bg, "Position", [200, 10, 75, 25], "Text", "ECHO", "ButtonPushedFcn", @(button_echo, event)updateBtn_Echo(slider_theta,label_theta));
     button_trajectory = uibutton(bg, "Position", [290, 10, 150, 25], "Text", "EXECUTE TRAJECTORY", "ButtonPushedFcn", @(button_trajectory, event)trajectory_Btn());
 
     button_up = uibutton(fig, "Position", [100, 300, 50, 50], "Text", "UP", "ButtonPushedFcn", @(button_up, event)updateBtn_Up(check_xy));
@@ -106,7 +112,7 @@ if (clientID>-1)
 
     %%%%%%%%%%%
     %start position
-    rs=[+0.42425; -0.00701; +0.83639;pi/2;+0.64828;0];
+    rs=[+0.42425; -0.00701; +0.83639;pi;+0.64828;0];
     rd=rs;
     
     dr=[0;0;0;0;0;0];
@@ -117,6 +123,8 @@ if (clientID>-1)
     errors = [];
     iteration = 0;
     dq=zeros(7);
+
+
       
     % figure; 
     % hold on;
@@ -157,12 +165,13 @@ if (clientID>-1)
     %% FORCE SENSOR 
     [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
     % ForceZ=-force(3);
-    %% SIMULATION LOOP
+
+    % SIMULATION LOOP
 
     while true
 
         if flag_doing_echo
-            updateBtn_Echo(slider_phi,label_phi);
+            updateBtn_Echo(slider_theta,label_theta);
         end
 
         % [axes,buttons] = read(joy);             %Controller Button increment: A==1; B==2; X==3; Y==4
@@ -202,10 +211,10 @@ if (clientID>-1)
             end
         end
         if buttons(8) == 1 %select
-            updateBtn_Home(slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_phi,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_phi,ef_gainD_link4pos,ef_gainDq,check_xy);
+            updateBtn_Home(slider_theta,label_theta,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy);
         end
         if buttons(4) == 1 %y/triangolo
-            updateBtn_Echo(slider_phi,label_phi); 
+            updateBtn_Echo(slider_theta,label_theta); 
         end
 
         d = str2double(label_d.Text);
@@ -218,7 +227,7 @@ if (clientID>-1)
 
 
         rd=rs+[dx;dy;dz;0;0;0];
-        rd(4)=str2double(label_phi.Text);
+        rd(4)=str2double(label_theta.Text);
 
 
         % iteration = iteration + 1;
@@ -226,15 +235,15 @@ if (clientID>-1)
         K=[ef_gainK_x.Value,0,0,0,0,0;
            0,ef_gainK_y.Value,0,0,0,0;
            0,0,ef_gainK_z.Value,0,0,0;
-           0,0,0,ef_gainK_phi.Value,0,0;
+           0,0,0,ef_gainK_theta.Value,0,0;
            0,0,0,0,ef_gainK_link4pos.Value,0;
-           0,0,0,0,0,0];
+           0,0,0,0,0,ef_gainK_sum.Value];
         Dr=[ef_gainD_x.Value,0,0,0,0,0;
            0,ef_gainD_y.Value,0,0,0,0;
            0,0,ef_gainD_z.Value,0,0,0;
-           0,0,0,ef_gainD_phi.Value,0,0;
+           0,0,0,ef_gainD_theta.Value,0,0;
            0,0,0,0,ef_gainD_link4pos.Value,0;
-           0,0,0,0,0,0];
+           0,0,0,0,0,ef_gainD_sum.Value];
         Dq=eye(7)*ef_gainDq.Value;
         %Aq=eye(7)*ef_gainAq.Value;
 
@@ -253,7 +262,7 @@ if (clientID>-1)
         sim.simxSetFloatSignal(clientID,'error_x',e(1),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'error_y',e(2),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'error_z',e(3),sim.simx_opmode_streaming);
-        sim.simxSetFloatSignal(clientID,'error_phi',e(4),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'error_theta',e(4),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'error_z4',e(5),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'rd_x',rd(1),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'rd_y',rd(2),sim.simx_opmode_streaming);
@@ -327,24 +336,24 @@ function updateBtn_Right()
     dx = dx+d;
 end    
 
-function updateBtn_Home(slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_phi,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_phi,ef_gainD_link4pos,ef_gainDq,check_xy)
+function updateBtn_Home(slider_theta,label_theta,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy)
     global dx dy dz flag_doing_echo
     dx = 0;
     dy = 0;
     dz = 0;
-    slider_phi.Value = pi;
-    label_phi.Text = '3.14';
+    slider_theta.Value = pi;
+    label_theta.Text = '3.14';
     slider_d.Value = 0.01;
     label_d.Text = '0.01';
     ef_gainK_x.Value = 250;
     ef_gainK_y.Value = 250;
     ef_gainK_z.Value = 75;
-    ef_gainK_phi.Value = 50;
+    ef_gainK_theta.Value = 50;
     ef_gainK_link4pos.Value = 250;
     ef_gainD_x.Value = 500;
     ef_gainD_y.Value = 500;
     ef_gainD_z.Value = 500;
-    ef_gainD_phi.Value = 20;
+    ef_gainD_theta.Value = 20;
     ef_gainD_link4pos.Value = 650;
     ef_gainDq.Value = 8;
     check_xy.Value = true;
@@ -352,7 +361,7 @@ function updateBtn_Home(slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gain
 
 end
 
-function updateBtn_Echo(slider_phi,label_phi)
+function updateBtn_Echo(slider_theta,label_theta)
     global dx dy dz ForceZ flag_doing_echo
     if ForceZ >= 5
         flag_doing_echo = false;
@@ -364,8 +373,8 @@ function updateBtn_Echo(slider_phi,label_phi)
     % dx = 0;
     % dy = 0;
     % dz = -0.4;
-    % slider_phi.Value = pi;
-    % label_phi.Text
+    % slider_theta.Value = pi;
+    % label_theta.Text
 end
 
 function updateLabel(slider, label)
