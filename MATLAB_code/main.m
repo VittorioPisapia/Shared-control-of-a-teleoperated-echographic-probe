@@ -76,7 +76,7 @@ if (clientID>-1)
 
     label_phi = uilabel(fig, "Position",[400, 50, 100 , 22], "Text", "3.14");
     label_phi_name = uilabel(fig, "Position",[400, 320, 100 , 22], "Text", "Phi Angle");
-    slider_phi = uislider(fig, "Position", [400, 100, 200, 3], "Limits", [pi-deg2rad(20), pi],"Value", pi, "ValueChangedFcn",@(slider_phi,event)updateLabel(slider_phi,label_phi), "Orientation", "vertical");
+    slider_phi = uislider(fig, "Position", [400, 100, 200, 3], "Limits", [0, pi],"Value", pi, "ValueChangedFcn",@(slider_phi,event)updateLabel(slider_phi,label_phi), "Orientation", "vertical");
     
     bg = uibuttongroup(fig, "Title","Tools", "Position",[10, 400, 450, 100]);
     check_xy = uiradiobutton(bg, "Text","Plane XY", "Position",[10, 10, 150, 25], "Value", true); 
@@ -95,8 +95,8 @@ if (clientID>-1)
     %%%%%%%%%%%
     %Aq=eye(7)*5;
     Dq=eye(7)*5;     
-    Dr=eye(5);
-    K=eye(5);
+    Dr=eye(6);
+    K=eye(6);
     qp=zeros(7);    
     dqp=zeros(7);   
     Jp=zeros(5,7);
@@ -106,7 +106,7 @@ if (clientID>-1)
 
     %%%%%%%%%%%
     %start position
-    rs=[+0.42425; -0.00701; +0.83639;pi;+0.64828];
+    rs=[+0.42425; -0.00701; +0.83639;pi/2;0]; %link=+0.64828
     rd=rs;
     
     dr=[0;0;0;0;0];
@@ -134,7 +134,7 @@ if (clientID>-1)
             [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming); 
     end
     qp=qn;
-    J=JacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+    J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
     Jp=J;
 
     for i=1:7
@@ -227,12 +227,14 @@ if (clientID>-1)
            0,ef_gainK_y.Value,0,0,0;
            0,0,ef_gainK_z.Value,0,0;
            0,0,0,ef_gainK_phi.Value,0;
-           0,0,0,0,ef_gainK_link4pos.Value];
+           % 0,0,0,0,ef_gainK_link4pos.Value,0;
+           0,0,0,0,5];
         Dr=[ef_gainD_x.Value,0,0,0,0;
            0,ef_gainD_y.Value,0,0,0;
            0,0,ef_gainD_z.Value,0,0;
            0,0,0,ef_gainD_phi.Value,0;
-           0,0,0,0,ef_gainD_link4pos.Value];
+           % 0,0,0,0,ef_gainD_link4pos.Value,0;
+           0,0,0,0,5];
         Dq=eye(7)*ef_gainDq.Value;
         %Aq=eye(7)*ef_gainAq.Value;
 
@@ -242,7 +244,7 @@ if (clientID>-1)
 
         dq=(qn-qp)/dt;
         p_e = DKnum(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
-        ra=TaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7),p_e);
+        ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7),p_e);
         dr = (ra-rp)/dt;
         %ddq = (dq-dqp)/dt;
         
@@ -264,7 +266,7 @@ if (clientID>-1)
         drawnow;
 
         g=get_GravityVector(qn);
-        J=JacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+        J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         dJ=(J-Jp)/dt;
         c=get_CoriolisVector(qn,dq);
         M=get_MassMatrix(qn);
