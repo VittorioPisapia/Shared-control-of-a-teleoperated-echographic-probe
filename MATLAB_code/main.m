@@ -387,7 +387,7 @@ function updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,l
     slider_theta.Value = pi;
     label_theta.Text = '3.14';
     slider_phi.Value = 0.00;
-    label_phi.Text = '0.00';
+    updateLabel(slider_phi,label_phi);  %Ho provato a fa così
     slider_d.Value = 0.01;
     label_d.Text = '0.01';
     ef_gainK_x.Value = 250;
