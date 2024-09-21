@@ -49,7 +49,7 @@ if (clientID>-1)
     label_K_z = uilabel(gain, "Position",[10, 160, 100 , 22], "Text", "Gain over Kz");
     ef_gainK_z = uieditfield(gain, "numeric", "Position", [10, 130, 50, 22], "Limits", [0, 1000], "Value", 75);
     label_K_theta = uilabel(gain, "Position",[10, 100, 100 , 22], "Text", "Gain over Ktheta");
-    ef_gainK_theta = uieditfield(gain, "numeric", "Position", [10, 70, 50, 22], "Limits", [0, 1000], "Value", 50);
+    ef_gainK_theta = uieditfield(gain, "numeric", "Position", [10, 70, 50, 22], "Limits", [0, 1000], "Value", 45);
     label_K_link4pos = uilabel(gain, "Position",[10, 40, 100 , 22], "Text", "Gain over K_link4");
     ef_gainK_link4pos = uieditfield(gain, "numeric", "Position", [10, 10, 50, 22], "Limits", [0, 1000], "Value", 250);
     
@@ -60,7 +60,7 @@ if (clientID>-1)
     label_D_z = uilabel(gain, "Position",[180, 160, 100 , 22], "Text", "Gain over Dz");
     ef_gainD_z = uieditfield(gain, "numeric", "Position", [180, 130, 50, 22], "Limits", [0, 1000], "Value", 500);
     label_D_theta = uilabel(gain, "Position",[180, 100, 100 , 22], "Text", "Gain over Dtheta");
-    ef_gainD_theta = uieditfield(gain, "numeric", "Position", [180, 70, 50, 22], "Limits", [0, 1000], "Value", 20);
+    ef_gainD_theta = uieditfield(gain, "numeric", "Position", [180, 70, 50, 22], "Limits", [0, 1000], "Value", 8);
     label_D_link4pos = uilabel(gain, "Position",[180, 40, 100 , 22], "Text", "Gain over D_link4");
     ef_gainD_link4pos = uieditfield(gain, "numeric", "Position", [180, 10, 50, 22], "Limits", [0, 1000], "Value", 650);
     
@@ -68,9 +68,9 @@ if (clientID>-1)
     ef_gainDq = uieditfield(gain, "numeric", "Position", [300, 250, 50, 22], "Limits", [0, 600], "Value", 8);
     
     label_K_phi = uilabel(gain, "Position",[300, 220, 100 , 22], "Text", "Gain Kphi");
-    ef_gainK_phi = uieditfield(gain, "numeric", "Position", [300, 190, 50, 22], "Limits", [0, 1000], "Value", 0);  
+    ef_gainK_phi = uieditfield(gain, "numeric", "Position", [300, 190, 50, 22], "Limits", [0, 1000], "Value", 1);  
     label_D_phi = uilabel(gain, "Position",[300, 160, 100 , 22], "Text", "Gain Dphi");
-    ef_gainD_phi = uieditfield(gain, "numeric", "Position", [300, 130, 50, 22], "Limits", [0, 1000], "Value", 0);
+    ef_gainD_phi = uieditfield(gain, "numeric", "Position", [300, 130, 50, 22], "Limits", [0, 1000], "Value", 1);
     
 
     % label_Aq= uilabel(gain, "Position",[300, 100, 100 , 22], "Text", "Gain over Aq");
@@ -82,11 +82,11 @@ if (clientID>-1)
 
     label_theta = uilabel(fig, "Position",[500, 100, 100 , 22], "Text", "3.14");
     label_theta_name = uilabel(fig, "Position",[400, 100, 100 , 22], "Text", "Theta Angle:");
-    slider_theta = uislider(fig, "Position", [550, 100, 200, 3], "Limits", [pi-deg2rad(20), pi],"Value", pi, "ValueChangedFcn",@(slider_theta,event)updateLabel(slider_theta,label_theta));
+    slider_theta = uislider(fig, "Position", [550, 100, 200, 3], "Limits", [pi-deg2rad(30), pi],"Value", pi, "ValueChangedFcn",@(slider_theta,event)updateLabel(slider_theta,label_theta));
     
     label_phi = uilabel(fig, "Position",[500, 40, 100 , 22], "Text", "0.00");
     label_phi_name = uilabel(fig, "Position",[400, 40, 100 , 22], "Text", "Phi Angle:");
-    slider_phi = uislider(fig, "Position", [550, 40, 200, 3], "Limits", [-deg2rad(21), deg2rad(21)],"Value", 0.00, "ValueChangedFcn",@(slider_phi,event)updateLabel(slider_phi,label_phi));
+    slider_phi = uislider(fig, "Position", [550, 40, 200, 3], "Limits", [-pi+deg2rad(25), pi-deg2rad(25)],"Value", 0.00, "ValueChangedFcn",@(slider_phi,event)updateLabel(slider_phi,label_phi));
     
 
     bg = uibuttongroup(fig, "Title","Tools", "Position",[10, 400, 450, 100]);
@@ -124,7 +124,7 @@ if (clientID>-1)
     rp=[0;0;0;0;0;0];
 
     dt=0.05;
-    e=[0,0,0,0,0];
+    e=[0,0,0,0,0,0];
     errors = [];
     iteration = 0;
     dq=zeros(7);
@@ -163,6 +163,7 @@ if (clientID>-1)
     sim.simxSetFloatSignal(clientID,'error_z',e(3),sim.simx_opmode_streaming);
     sim.simxSetFloatSignal(clientID,'error_phi',e(4),sim.simx_opmode_streaming);
     sim.simxSetFloatSignal(clientID,'error_z4',e(5),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'error_phi',e(6),sim.simx_opmode_streaming);
     sim.simxSetFloatSignal(clientID,'rd_x',rd(1),sim.simx_opmode_streaming);
     sim.simxSetFloatSignal(clientID,'rd_y',rd(2),sim.simx_opmode_streaming);
     sim.simxSetFloatSignal(clientID,'rd_z',rd(3),sim.simx_opmode_streaming);
@@ -216,11 +217,36 @@ if (clientID>-1)
             end
         end
         if buttons(8) == 1 %select
-            updateBtn_Home(slider_theta,label_theta,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy);
+            updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi);
         end
         if buttons(4) == 1 %y/triangolo
             updateBtn_Echo(slider_theta,label_theta); 
         end
+
+        if abs(axes(5))>=0.2 || abs(axes(4))>=0.2
+    	    r3=round(-atan2(axes(5),axes(4)),2) 
+            if r3>(-pi+deg2rad(25)) && r3<(pi-deg2rad(25))
+                slider_phi.Value = r3;
+                updateLabel(slider_phi,label_phi);
+            end
+
+        end
+        
+        if buttons(5) == 1
+            if str2double(label_theta.Text)<=pi - 0.02
+                slider_theta.Value =  slider_theta.Value + 0.01;
+                updateLabel(slider_theta,label_theta);
+            end
+        end
+        if buttons(6) == 1
+            if str2double(label_theta.Text)>=pi-deg2rad(30) + 0.02 
+                slider_theta.Value =  slider_theta.Value - 0.01;
+                updateLabel(slider_theta,label_theta);
+            end
+        end
+
+
+
 
         d = str2double(label_d.Text);
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
@@ -236,7 +262,7 @@ if (clientID>-1)
         rd(4)=str2double(label_theta.Text);
         rd(6)=str2double(label_phi.Text);
         
-        threshold = 0.1;
+        threshold = 0.17;
         if rd(4)>pi-threshold && rd(4)<pi+threshold
             Kphi=0;
             Dphi=0;
@@ -280,6 +306,7 @@ if (clientID>-1)
         sim.simxSetFloatSignal(clientID,'error_z',e(3),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'error_theta',e(4),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'error_z4',e(5),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'error_phi',e(6),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'rd_x',rd(1),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'rd_y',rd(2),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'rd_z',rd(3),sim.simx_opmode_streaming);
