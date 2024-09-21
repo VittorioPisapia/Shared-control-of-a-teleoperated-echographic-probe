@@ -268,8 +268,8 @@ if (clientID>-1)
         end
 
         dq=(qn-qp)/dt;
-        p_e = DKnum(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
-        ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7),p_e);
+        %p_e = DKnum(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+        ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         dr = (ra-rp)/dt;
         %ddq = (dq-dqp)/dt;
         
