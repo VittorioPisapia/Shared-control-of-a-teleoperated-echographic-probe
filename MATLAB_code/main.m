@@ -170,11 +170,11 @@ if (clientID>-1)
 
         drawnow;
 
-        phi = str2double(label_theta.Text);
+        phi = str2double(label_phi.Text);
         if flag_doing_echo
             updateBtn_Echo();
         end
-        
+         
         % CONTROLLER INPUT                                                 %  Right Analog Stick: Move end-effector on XY plane;
         [axes,buttons] = read(joy);                                        %  Left Analog Stick : Changes PHI;
         if axes(1)<-0.1                                                    %  RT/LT Buttons: Change Z of end-effector;
@@ -202,12 +202,13 @@ if (clientID>-1)
             updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi);
         end
         if buttons(4) == 1                                                 
-            updateBtn_Echo(slider_theta,label_theta); 
+            updateBtn_Echo(); 
         end
 
         if abs(axes(5))>=0.2 || abs(axes(4))>=0.2                          
     	    r3=round(-atan2(axes(5),axes(4)),2); 
             if r3>(-pi+deg2rad(25)) && r3<(pi-deg2rad(25))
+                phi = r3;
                 slider_phi.Value = r3;
                 updateLabel(slider_phi,label_phi);
             end
@@ -225,9 +226,11 @@ if (clientID>-1)
                 updateLabel(slider_theta,label_theta);
             end
         end
-        phi = str2double(label_phi.Text);
+
         %%%%%%%%%%%%%%%
 
+
+        label_phi.Text = num2str(phi);
         d = str2double(label_d.Text);
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
         ForceZ=-force(3);
@@ -297,6 +300,7 @@ if (clientID>-1)
         rp = ra;
         qp=qn;
         %dqp=dq;
+        Jp=J;
 
         for i=1:7
             if u(i)>0
@@ -383,9 +387,9 @@ function updateBtn_Echo()
         dz = dz-0.0001;
 
         if phi == 0.00
-        elseif phi<0
-            phi = phi+0.01;
-        elseif phi>0
+        elseif phi<0.00
+            phi = phi+0.01;            
+        elseif phi>0.00
             phi = phi-0.01;
         end
 

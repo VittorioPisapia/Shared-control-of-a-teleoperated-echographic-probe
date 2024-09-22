@@ -26,12 +26,13 @@ if (clientID>-1)
     [r,ForceSensor]=sim.simxGetObjectHandle(clientID,'Franka_connection',sim.simx_opmode_blocking);
 
 
-    global dx dy dz d ForceZ flag_can_echo flag_doing_echo
+    global dx dy dz d ForceZ flag_doing_echo phi
     dx = 0;
     dy = 0;
     dz = 0;
     d = 0.05;
     ForceZ = 0;
+    phi = 0;
 
     SAFETY_VALUE = 8;
     flag_can_echo = true;
@@ -125,8 +126,6 @@ if (clientID>-1)
 
     dt=0.05;
     e=[0,0,0,0,0,0];
-    errors = [];
-    iteration = 0;
     dq=zeros(7);
 
     %% FLUSH THE BUFFER
@@ -171,16 +170,17 @@ if (clientID>-1)
 
         drawnow;
 
+        phi = str2double(label_phi.Text);
         if flag_doing_echo
-            updateBtn_Echo(slider_theta,label_theta);
+            updateBtn_Echo();
         end
-        
-        % CONTROLLER INPUT
-        [axes,buttons] = read(joy);     
-        if axes(1)<-0.1                     %Right Analog Stick: Move end-effector on XY plane;
-            dx = dx-0.001*abs(axes(1));
-        end
-        if axes(1)>0.1
+         
+        % CONTROLLER INPUT                                                 %  Right Analog Stick: Move end-effector on XY plane;
+        [axes,buttons] = read(joy);                                        %  Left Analog Stick : Changes PHI;
+        if axes(1)<-0.1                                                    %  RT/LT Buttons: Change Z of end-effector;
+            dx = dx-0.001*abs(axes(1));                                    %  Select Button: return in HOME position;
+        end                                                                %  Y Button : puts end-effector in ECHO position;                                                    
+        if axes(1)>0.1                                                     %  RB/LB Buttons: Change THETA;
             dx = dx+0.001*abs(axes(1));
         end
         if axes(2)<-0.1
@@ -189,7 +189,7 @@ if (clientID>-1)
         if axes(2)>0.1
             dy = dy-0.001*abs(axes(2));
         end
-        if axes(3)>0.05                    %RT/LT Buttons: Change Z of end-effector;
+        if axes(3)>0.05                                                    
             dz = dz+0.001*abs(axes(3));
         end
         if axes(3)<-0.5
@@ -198,22 +198,23 @@ if (clientID>-1)
             end
         end
 
-        if buttons(8) == 1                  %Select Button: return in home position;
+        if buttons(8) == 1                                                 
             updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi);
         end
-        if buttons(4) == 1                  %Y Button : enter echo mode;
-            updateBtn_Echo(slider_theta,label_theta); 
+        if buttons(4) == 1                                                 
+            updateBtn_Echo(); 
         end
 
-        if abs(axes(5))>=0.2 || abs(axes(4))>=0.2                   %Left Analog Stick : Change PHI;
+        if abs(axes(5))>=0.2 || abs(axes(4))>=0.2                          
     	    r3=round(-atan2(axes(5),axes(4)),2); 
             if r3>(-pi+deg2rad(25)) && r3<(pi-deg2rad(25))
+                phi = r3;
                 slider_phi.Value = r3;
                 updateLabel(slider_phi,label_phi);
             end
-
-        end       
-        if buttons(5) == 1                                          %RB/LB: Change THETA;
+        end    
+        
+        if buttons(5) == 1                                          
             if str2double(label_theta.Text)<=pi - 0.02
                 slider_theta.Value =  slider_theta.Value + 0.01;
                 updateLabel(slider_theta,label_theta);
@@ -225,8 +226,11 @@ if (clientID>-1)
                 updateLabel(slider_theta,label_theta);
             end
         end
+
         %%%%%%%%%%%%%%%
 
+
+        label_phi.Text = num2str(phi);
         d = str2double(label_d.Text);
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
         ForceZ=-force(3);
@@ -240,7 +244,7 @@ if (clientID>-1)
         rd(4)=str2double(label_theta.Text);
         rd(6)=str2double(label_phi.Text);
         
-        threshold = 0.17;   
+        threshold = 0.17;   %PHI control starts at THETA=2.97
         if rd(4)>pi-threshold && rd(4)<pi+threshold
             Kphi=0;
             Dphi=0;
@@ -296,6 +300,7 @@ if (clientID>-1)
         rp = ra;
         qp=qn;
         %dqp=dq;
+        Jp=J;
 
         for i=1:7
             if u(i)>0
@@ -375,11 +380,19 @@ function updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,l
 end
 
 function updateBtn_Echo()
-    global dz ForceZ flag_doing_echo
+    global dz ForceZ flag_doing_echo phi
     if ForceZ >= 5
         flag_doing_echo = false;
     else
         dz = dz-0.0001;
+
+        if phi == 0.00
+        elseif phi<0.00
+            phi = phi+0.01;            
+        elseif phi>0.00
+            phi = phi-0.01;
+        end
+
         flag_doing_echo = true;
     end    
 end
