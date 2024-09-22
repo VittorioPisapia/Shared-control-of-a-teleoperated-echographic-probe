@@ -125,15 +125,7 @@ if (clientID>-1)
 
     dt=0.05;
     e=[0,0,0,0,0,0];
-    errors = [];
-    iteration = 0;
     dq=zeros(7);
-
-
-      
-    % figure; 
-    % hold on;
-    % yline(0, '--r', 'LineWidth', 1.5);
 
     %% FLUSH THE BUFFER
 
@@ -170,36 +162,23 @@ if (clientID>-1)
 
     %% FORCE SENSOR 
     [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
-    % ForceZ=-force(3);
 
     % SIMULATION LOOP
 
     while true
 
+        drawnow;
+
         if flag_doing_echo
             updateBtn_Echo(slider_theta,label_theta);
         end
-
-        % [axes,buttons] = read(joy);             %Controller Button increment: A==1; B==2; X==3; Y==4
-        % if buttons(1) == 1	                    %Molto grezzo come incrementi, tocca cercare di usare gli analogici
-        %     dz = dz-0.01;
-        % end
-        % if buttons(2) == 1
-        %     dx = dx+0.01;
-        % end
-        % if buttons(3) == 1
-        %     dx = dx-0.01;
-        % end
-        % if buttons(4) == 1
-        %     dz = dz+0.01;    
-        % end
-
-        [axes,buttons] = read(joy);
-
-        if axes(1)<-0.1
-            dx = dx-0.001*abs(axes(1));
-        end
-        if axes(1)>0.1
+        
+        % CONTROLLER INPUT                                                 %  Right Analog Stick: Move end-effector on XY plane;
+        [axes,buttons] = read(joy);                                        %  Left Analog Stick : Changes PHI;
+        if axes(1)<-0.1                                                    %  RT/LT Buttons: Change Z of end-effector;
+            dx = dx-0.001*abs(axes(1));                                    %  Select Button: return in HOME position;
+        end                                                                %  Y Button : puts end-effector in ECHO position;                                                    
+        if axes(1)>0.1                                                     %  RB/LB Buttons: Change THETA;
             dx = dx+0.001*abs(axes(1));
         end
         if axes(2)<-0.1
@@ -208,7 +187,7 @@ if (clientID>-1)
         if axes(2)>0.1
             dy = dy-0.001*abs(axes(2));
         end
-        if axes(3)>0.05
+        if axes(3)>0.05                                                    
             dz = dz+0.001*abs(axes(3));
         end
         if axes(3)<-0.5
@@ -216,23 +195,23 @@ if (clientID>-1)
                 dz = dz-0.001*abs(axes(3));
             end
         end
-        if buttons(8) == 1 %select
+
+        if buttons(8) == 1                                                 
             updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi);
         end
-        if buttons(4) == 1 %y/triangolo
+        if buttons(4) == 1                                                 
             updateBtn_Echo(slider_theta,label_theta); 
         end
 
-        if abs(axes(5))>=0.2 || abs(axes(4))>=0.2
-    	    r3=round(-atan2(axes(5),axes(4)),2) 
+        if abs(axes(5))>=0.2 || abs(axes(4))>=0.2                          
+    	    r3=round(-atan2(axes(5),axes(4)),2); 
             if r3>(-pi+deg2rad(25)) && r3<(pi-deg2rad(25))
                 slider_phi.Value = r3;
                 updateLabel(slider_phi,label_phi);
             end
-
-        end
+        end    
         
-        if buttons(5) == 1
+        if buttons(5) == 1                                          
             if str2double(label_theta.Text)<=pi - 0.02
                 slider_theta.Value =  slider_theta.Value + 0.01;
                 updateLabel(slider_theta,label_theta);
@@ -244,25 +223,22 @@ if (clientID>-1)
                 updateLabel(slider_theta,label_theta);
             end
         end
-
-
-
+        %%%%%%%%%%%%%%%
 
         d = str2double(label_d.Text);
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
         ForceZ=-force(3);
         
-        %check if next rs is not underground
+        %Check if modified rs is not undeground;
         if rs(3)+dz < 0   
             dz=-rs(3);  
         end
-
 
         rd=rs+[dx;dy;dz;0;0;0];
         rd(4)=str2double(label_theta.Text);
         rd(6)=str2double(label_phi.Text);
         
-        threshold = 0.17;
+        threshold = 0.17;   %PHI control starts at THETA=2.97
         if rd(4)>pi-threshold && rd(4)<pi+threshold
             Kphi=0;
             Dphi=0;
@@ -270,9 +246,6 @@ if (clientID>-1)
             Kphi=ef_gainK_phi.Value;
             Dphi=ef_gainD_phi.Value;
         end
-
-
-        % iteration = iteration + 1;
         
         K=[ef_gainK_x.Value,0,0,0,0,0;
            0,ef_gainK_y.Value,0,0,0,0;
@@ -299,7 +272,6 @@ if (clientID>-1)
         dr = (ra-rp)/dt;
         %ddq = (dq-dqp)/dt;
         
-        % disp('error');
         e = rd-ra;
         sim.simxSetFloatSignal(clientID,'error_x',e(1),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'error_y',e(2),sim.simx_opmode_streaming);
@@ -311,12 +283,6 @@ if (clientID>-1)
         sim.simxSetFloatSignal(clientID,'rd_y',rd(2),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'rd_z',rd(3),sim.simx_opmode_streaming);
 
-        % errors=[errors,e];
-        % xlabel('t');
-        % ylabel('Error Norm');
-        % title('Real-time Error Norm');
-        drawnow;
-
         g=get_GravityVector(qn);
         J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         dJ=(J-Jp)/dt;
@@ -324,10 +290,10 @@ if (clientID>-1)
         M=get_MassMatrix(qn);
         
         u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(K*(rd-ra)-Dr*dr)-Dq*transpose(dq);
+
         rp = ra;
         qp=qn;
         %dqp=dq;
-
 
         for i=1:7
             if u(i)>0
@@ -340,7 +306,6 @@ if (clientID>-1)
             end
             sim.simxSetJointForce(clientID,h(i),abs(u(i)),sim.simx_opmode_oneshot);
         end
-
     sim.simxSynchronousTrigger(clientID);
     end
 end
@@ -405,7 +370,6 @@ function updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,l
     ef_gainDq.Value = 8;
     check_xy.Value = true;
     flag_doing_echo = false;
-
 end
 
 function updateBtn_Echo()
@@ -415,9 +379,7 @@ function updateBtn_Echo()
     else
         dz = dz-0.0001;
         flag_doing_echo = true;
-    end
-
-    
+    end    
 end
 
 function updateLabel(slider, label)
