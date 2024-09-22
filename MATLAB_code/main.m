@@ -26,12 +26,13 @@ if (clientID>-1)
     [r,ForceSensor]=sim.simxGetObjectHandle(clientID,'Franka_connection',sim.simx_opmode_blocking);
 
 
-    global dx dy dz d ForceZ flag_can_echo flag_doing_echo
+    global dx dy dz d ForceZ flag_doing_echo phi
     dx = 0;
     dy = 0;
     dz = 0;
     d = 0.05;
     ForceZ = 0;
+    phi = 0;
 
     SAFETY_VALUE = 8;
     flag_can_echo = true;
@@ -169,8 +170,9 @@ if (clientID>-1)
 
         drawnow;
 
+        phi = str2double(label_theta.Text);
         if flag_doing_echo
-            updateBtn_Echo(slider_theta,label_theta);
+            updateBtn_Echo();
         end
         
         % CONTROLLER INPUT                                                 %  Right Analog Stick: Move end-effector on XY plane;
@@ -223,6 +225,7 @@ if (clientID>-1)
                 updateLabel(slider_theta,label_theta);
             end
         end
+        phi = str2double(label_phi.Text);
         %%%%%%%%%%%%%%%
 
         d = str2double(label_d.Text);
@@ -373,11 +376,19 @@ function updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,l
 end
 
 function updateBtn_Echo()
-    global dz ForceZ flag_doing_echo
+    global dz ForceZ flag_doing_echo phi
     if ForceZ >= 5
         flag_doing_echo = false;
     else
         dz = dz-0.0001;
+
+        if phi == 0.00
+        elseif phi<0
+            phi = phi+0.01;
+        elseif phi>0
+            phi = phi-0.01;
+        end
+
         flag_doing_echo = true;
     end    
 end
