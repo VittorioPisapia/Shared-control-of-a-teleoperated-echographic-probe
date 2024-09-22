@@ -1,4 +1,4 @@
-function trajectory_function(clientID,sim,rd)
+function trajectory_function(clientID,sim)
     %trajectory tracking control law
 
     %this function returns the current desired task vector in order to make
@@ -23,9 +23,9 @@ function trajectory_function(clientID,sim,rd)
 
     A=1;
     %Trajectory parametrization
-    rd=[rd(1)+A*sin(t);rd(2)+A*cos(t)*sin(t);rd(3);rd(4);rd(5);rd(6)];
+    rd=[A*sin(t);A*cos(t)*sin(t);0;0;0;0];
     drd=[A*cos(t);A*(cos(t)^2-sin(t)^2);0;0;0;0];
-    ddrd=[-A*sin(t);-4*A*cos(t)*sin(t);0;0;0;0];
+    ddrd=[-A*sin(t);0;0;0;0;0];
     
     for time=1:length(t)
         for i=1:7
