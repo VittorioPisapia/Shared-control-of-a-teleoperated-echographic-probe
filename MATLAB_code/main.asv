@@ -26,13 +26,14 @@ if (clientID>-1)
     [r,ForceSensor]=sim.simxGetObjectHandle(clientID,'Franka_connection',sim.simx_opmode_blocking);
 
 
-    global dx dy dz d ForceZ flag_doing_echo phi
+    global dx dy dz d ForceZ flag_doing_echo phi rd
     dx = 0;
     dy = 0;
     dz = 0;
     d = 0.05;
     ForceZ = 0;
     phi = 0;
+    rd = zeros(6,1);
 
     SAFETY_VALUE = 8;
     flag_can_echo = true;
