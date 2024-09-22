@@ -16,6 +16,8 @@ function trajectory_function(clientID,sim,rd)
     [r,h(7)]=sim.simxGetObjectHandle(clientID,'Franka_joint7',sim.simx_opmode_blocking);
     [r,ForceSensor]=sim.simxGetObjectHandle(clientID,'Franka_connection',sim.simx_opmode_blocking);
 
+    [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
+
     %Simulation time
     dt=0.05;
     T=2;
@@ -26,13 +28,45 @@ function trajectory_function(clientID,sim,rd)
     rd=[rd(1)+A*sin(t);rd(2)+A*cos(t)*sin(t);rd(3);rd(4);rd(5);rd(6)];
     drd=[A*cos(t);A*(cos(t)^2-sin(t)^2);0;0;0;0];
     ddrd=[-A*sin(t);-4*A*cos(t)*sin(t);0;0;0;0];
+
+    %===inizializzazione parametri==========
+    for i=1:7
+        [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
+    end
+    qp = qn;
+    dq=zeros(7);
+    %servono inizializzazione di ddr_precedente e dr_precedente per la derivazione numerica fuori loop
+    %==========================================
+
+
+    %===Spazio per i gain ========
+
+    %=============================
     
     for time=1:length(t)
         for i=1:7
         	    [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
         end
+
+        dq=(qn-qp)/dt;
+        ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7)); %task attuale
+        dr = (ra-rp)/dt;
+
+        g=get_GravityVector(qn);
+        c=get_CoriolisVector(qn,dq);
+        M=get_MassMatrix(qn);
     
-        
+        %== possibile forma con check sulla forza di contatto ===========================
+        [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
+        fz = -force(3);
+        while true
+            if fz < 5
+                rd(3) = rd(3)-0.01;
+            else
+                break;
+            end
+        end  
+        %============================================    
         sim.simxSynchronousTrigger(clientID);
     end
 
