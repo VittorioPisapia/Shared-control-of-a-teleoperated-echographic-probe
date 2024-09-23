@@ -30,7 +30,7 @@ function trajectory_function(clientID,sim)
     % ddrd=[-(2*pi)^2/(T^2)*A*sin((2*pi)*t/T), -(2*pi)^2/(T^2)*4*A*cos(t).*sin((2*pi)*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1),-(2*pi)^2/(T^2)*deg2rad(155)*sin((2*pi)/T*t)];
 
     rd1 = [ones(length(t),1)*rd(1)+(t/T)*A,ones(length(t),1)*rd(2), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
-    drd = [ones(length(t),1)*A/T, ones(length(t),1)*A/T, zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
+    drd = [ones(length(t),1)*A/T, ones(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
     ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
 
 
@@ -80,7 +80,7 @@ function trajectory_function(clientID,sim)
         ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7)) %task attuale
         disp('rd1')
         rd1(time,:)
-        
+
         dr = (ra-rp)/dt;
 
         g=get_GravityVector(qn);
