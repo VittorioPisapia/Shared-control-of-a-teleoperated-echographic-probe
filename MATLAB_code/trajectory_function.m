@@ -20,26 +20,43 @@ function trajectory_function(clientID,sim)
 
     %Simulation time
     dt=0.05;
-    T=3;
+    T=4;
     t=transpose(0:dt:T);
 
-    A=0.1;
+    A=0.001;
     %Trajectory parametrization
     % rd1=[ones(length(t),1)*rd(1)+A*sin((2*pi)*t/T), ones(length(t),1)*rd(2)+A*cos((2*pi)*t/T).*sin((2*pi)*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4) ,ones(length(t),1)*rd(5), deg2rad(155)*sin((2*pi)/T*t)];
     % drd=[(2*pi)/(T)*A*cos((2*pi)*t/T), (2*pi)/T*A*(cos((2*pi)*t/T).^2-sin((2*pi)*t/T).^2),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),(2*pi)/T*deg2rad(155)*cos((2*pi)/T*t)];
     % ddrd=[-(2*pi)^2/(T^2)*A*sin((2*pi)*t/T), -(2*pi)^2/(T^2)*4*A*cos(t).*sin((2*pi)*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1),-(2*pi)^2/(T^2)*deg2rad(155)*sin((2*pi)/T*t)];
 
-    rd1 = [ones(length(t),1)*rd(1)+t/T*A,ones(length(t),1)*rd(2)+t/T*A, ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
+    rd1 = [ones(length(t),1)*rd(1)+(t/T)*A,ones(length(t),1)*rd(2), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
     drd = [ones(length(t),1)*A/T, ones(length(t),1)*A/T, zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
     ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
+
+
+
+
     %===inizializzazione parametri==========
     for i=1:7
         [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
     end
-    qp = transpose(qn);
+    qp = qn;
     dq=zeros(7,1);
-    Jp=zeros(6,7);
-    rp=transpose(rd1(1,:));
+    J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+    Jp=J;
+    % rp=transpose(rd1(1,:));
+    disp('disp r precedente  fuori for')
+    rp = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7))
+    disp('disp rd passato')
+    rd
+    
+    for i=1:7
+        sim.simxSetJointMaxForce(clientID,h(i),100,sim.simx_opmode_streaming);
+    end
+    for i=1:7
+        sim.simxSetJointForce(clientID,h(i),0,sim.simx_opmode_oneshot);
+    end
+
     %servono inizializzazione di ddr_precedente e dr_precedente per la derivazione numerica fuori loop
     %==========================================
 
@@ -49,22 +66,21 @@ function trajectory_function(clientID,sim)
     %=============================
     
     for time=1:length(t)
-        disp('t')
-        time
-        disp('rd1')
-        rd1(time,:)
-        disp('drd')
-        drd(time,:)
-        disp('ddrd')
-        ddrd(time,:)
-
+        
         for i=1:7
-        	    [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
+            [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
         end
 
-        dq=(transpose(qn)-qp)/dt;
+        dq=(qn-qp)/dt;
+        disp('t')
+        time
+        disp('qn')
+        qn
         disp('ra')
         ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7)) %task attuale
+        disp('rd1')
+        rd1(time,:)
+        
         dr = (ra-rp)/dt;
 
         g=get_GravityVector(qn);
@@ -86,18 +102,18 @@ function trajectory_function(clientID,sim)
             Dphi=1;
         end
 
-        Km=[20,0,0,0,0,0;
-           0,20,0,0,0,0;
-           0,0,20,0,0,0;
-           0,0,0,0,0,0;
-           0,0,0,0,0,0;
-           0,0,0,0,0,0];
-        Dm=[10,0,0,0,0,0;
-           0,10,0,0,0,0;
-           0,0,10,0,0,0;
-           0,0,0,0,0,0;
-           0,0,0,0,0,0;
-           0,0,0,0,0,0];
+        Km=[250,0,0,0,0,0;
+           0,250,0,0,0,0;
+           0,0,75,0,0,0;
+           0,0,0,45,0,0;
+           0,0,0,0,250,0;
+           0,0,0,0,0,1];
+        Dm=[500,0,0,0,0,0;
+           0,500,0,0,0,0;
+           0,0,500,0,0,0;
+           0,0,0,8,0,0;
+           0,0,0,0,650,0;
+           0,0,0,0,0,1];
         Mm=[50,0,0,0,0,0;
            0,50,0,0,0,0;
            0,0,50,0,0,0;
@@ -112,7 +128,10 @@ function trajectory_function(clientID,sim)
         
         %control law
         %u=M*pinv(J)*(ddrd(time,:)-dJ*dq+pinv(Mm)*(Dm*(drd(time,:)-dr)+Km*(rd1(time,:)-ra)))+c+g+transpose(J)*(Mr*pinv(Mm)-eye(6)*transpose([force,torque]))-Dq*dq;
-         u=M*pinv(J)*(ddrd(time,:)-dJ*dq)+c+g+transpose(J)*(Km*(rd1(time,:)-ra)+Dm*(drd(time,:)-dr))-Dq*dq;
+        u=M*pinv(J)*(ddrd(time,:)-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd1(time,:)-ra)+Dm*(drd(time,:)-dr))-Dq*transpose(dq);
+        % u=M*pinv(J)*(-dJ*dq)+c+g+transpose(J)*(Km*(rd-ra)+Dm*(-dr))-Dq*dq;
+        % u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd-ra)-Dm*dr)-Dq*transpose(dq) %main
+
 
         for i=1:7
             if u(i)>0
@@ -134,11 +153,13 @@ function trajectory_function(clientID,sim)
         %         break;
         %     end
         % end  
-        %============================================    
-        sim.simxSynchronousTrigger(clientID);
-
+        %============================================
+        pause();
+        
+        qp=qn;
         rp=ra;
         Jp=J;
+        sim.simxSynchronousTrigger(clientID);
     end
 
 end

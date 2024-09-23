@@ -96,7 +96,7 @@ if (clientID>-1)
     check_xz = uiradiobutton(bg, "Text","Plane XZ", "Position",[10, 40, 150, 25]); 
     button_home = uibutton(bg, "Position", [200, 40, 75, 25], "Text", "HOME", "ButtonPushedFcn", @(button_home, event)updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi));
     button_echo = uibutton(bg, "Position", [200, 10, 75, 25], "Text", "ECHO", "ButtonPushedFcn", @(button_echo, event)updateBtn_Echo());
-    button_trajectory = uibutton(bg, "Position", [290, 10, 150, 25], "Text", "EXECUTE TRAJECTORY", "ButtonPushedFcn", @(button_trajectory, event)trajectory_function(clientID,sim));
+    button_trajectory = uibutton(bg, "Position", [290, 10, 150, 25], "Text", "EXECUTE TRAJECTORY", "ButtonPushedFcn", @(button_trajectory, event)trajectory_button(clientID,sim));
 
     button_up = uibutton(fig, "Position", [100, 300, 50, 50], "Text", "UP", "ButtonPushedFcn", @(button_up, event)updateBtn_Up(check_xy));
     button_down = uibutton(fig, "Position", [100, 100, 50, 50], "Text", "DOWN", "ButtonPushedFcn", @(button_down, event)updateBtn_Down(check_xy, SAFETY_VALUE));
@@ -127,7 +127,7 @@ if (clientID>-1)
 
     dt=0.05;
     e=[0,0,0,0,0,0];
-    dq=zeros(7);
+    dq=zeros(7,1);
 
     %% FLUSH THE BUFFER
 
@@ -143,6 +143,7 @@ if (clientID>-1)
     qp=qn;
     J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
     Jp=J;
+    rp =EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
 
     for i=1:7
         sim.simxSetJointMaxForce(clientID,h(i),100,sim.simx_opmode_streaming);
@@ -295,6 +296,11 @@ if (clientID>-1)
         dJ=(J-Jp)/dt;
         c=get_CoriolisVector(qn,dq);
         M=get_MassMatrix(qn);
+
+        disp('qn')
+        qn
+        disp('rd')
+        rd
         
         u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(K*(rd-ra)-Dr*dr)-Dq*transpose(dq);
 
@@ -402,3 +408,6 @@ function updateLabel(slider, label)
     label.Text = num2str(slider.Value, "%.2f");
 end
 
+function trajectory_button(clientID,sim)
+    trajectory_function(clientID,sim)
+end
