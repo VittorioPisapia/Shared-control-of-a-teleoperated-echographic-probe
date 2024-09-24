@@ -62,7 +62,7 @@ function Copy_of_trajectory_function(clientID,sim, button_trajectory)
     %=============================
     trajectories=2;
     for traj=1:trajectories
-        if traj ==1
+        if traj == 1
             dt=0.05;
             T=60;  
             t=transpose(0:dt:T);
@@ -86,18 +86,18 @@ function Copy_of_trajectory_function(clientID,sim, button_trajectory)
         %    for t_t =1:length(t)
         % 
         %        if t_t<t_1 
-        %            rd1(t_t, 4)=interp1([0, t_1], [rd(4),B], t_t);
+        %            rd1(t_t, 4)=interp1([0, t_1], [rd(4),B], t_t,'linear');
         %            drd(t_t,4)=-(pi-B)/t_1;
         % 
         %        elseif t_t>=t_1 && t_t<t_2
         %            rd1(t_t, 4)=B;
         % 
         %        else
-        %            rd1(t_t, 4)=interp1([t_2, T], [B,rd(4)], t_t);
+        %            rd1(t_t, 4)=interp1([t_2, T], [B,rd(4)], t_t,'linear');
         %            drd(t_t,4)=-(B-pi)/t_2;
         %        end
         %    end
-        % end
+        end
         t = 0;
         time = 1;
         while t<=T

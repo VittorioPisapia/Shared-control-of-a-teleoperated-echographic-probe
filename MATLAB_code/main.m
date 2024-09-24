@@ -177,7 +177,7 @@ if (clientID>-1)
 
         phi = str2double(label_phi.Text);
         if flag_doing_echo
-            updateBtn_Echo();
+            updateBtn_Echo(button_trajectory);
         end
          
         % CONTROLLER INPUT                                                 %  Right Analog Stick: Move end-effector on XY plane;
