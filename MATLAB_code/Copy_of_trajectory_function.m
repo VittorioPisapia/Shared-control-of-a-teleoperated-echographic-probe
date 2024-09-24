@@ -4,7 +4,7 @@ function Copy_of_trajectory_function(clientID,sim)
     %this function returns the current desired task vector in order to make
     %the robot regulation control to not overcome discontinuities
     %OR make a periodic trajectory with end point = start point 
-    global rd flag_trajectory J_global dJ_global
+    global rd
     
     h=zeros(1,6);
     [r,h(1)]=sim.simxGetObjectHandle(clientID,'Franka_joint1',sim.simx_opmode_blocking);
@@ -23,20 +23,25 @@ function Copy_of_trajectory_function(clientID,sim)
     T=20;
     t=transpose(0:dt:T);
 
-    A=0.1;
     %Trajectory parametrization
     % rd1=[ones(length(t),1)*rd(1)+A*sin((2*pi)*t/T), ones(length(t),1)*rd(2)+A*cos((2*pi)*t/T).*sin((2*pi)*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4) ,ones(length(t),1)*rd(5), deg2rad(155)*sin((2*pi)/T*t)];
     % drd=[(2*pi)/(T)*A*cos((2*pi)*t/T), (2*pi)/T*A*(cos((2*pi)*t/T).^2-sin((2*pi)*t/T).^2),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),(2*pi)/T*deg2rad(155)*cos((2*pi)/T*t)];
     % ddrd=[-(2*pi)^2/(T^2)*A*sin((2*pi)*t/T), -(2*pi)^2/(T^2)*4*A*cos(t).*sin((2*pi)*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1),-(2*pi)^2/(T^2)*deg2rad(155)*sin((2*pi)/T*t)];
+    
+    trajectories=2;
+    %trajectory 1
+    A=0.1;
+    rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2)+A*sin(2*pi*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
+    drd1 = [zeros(length(t),1), A*2*pi/T*cos(2*pi*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
+    ddrd1 = [zeros(length(t),1),-A*(2*pi/T)^2*sin(2*pi*t/T),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
 
-    rd1 = [ones(length(t),1)*rd(1)+A*t/T,ones(length(t),1)*rd(2), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
-    drd = [ones(length(t),1)*A/T, zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
-    ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
+    %trajectory 2
+    B=2.97;
+    C=pi/2;
+    rd2 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),ones(length(t),1)*B,ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)+C*sin(2*pi*t/T)];
+    drd2 = [zeros(length(t),1),zeros(length(t),1), zeros(length(t),1), B*2*pi/T*cos(2*pi*t/T), zeros(length(t),1), C*2*pi/T*cos(2*pi*t/T)];
+    ddrd2 = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),-B*(2*pi/T)^2*sin(2*pi*t/T),zeros(length(t),1),-C*(2*pi/T)^2*sin(2*pi*t/T)];
 
-    % rd1=rd
-    % rd1(1)=rd1(1)+0.1;
-    % drd=zeros(6,1);
-    % ddrd=zeros(6,1);
 
 
     %===inizializzazione parametri==========
@@ -81,85 +86,94 @@ function Copy_of_trajectory_function(clientID,sim)
         Dq=eye(7)*0;
 
     %=============================
-    t = 0;
-    time = 1;
-    while t<=T
-        for i=1:7
-            [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
-        end
-
-        dq=(qn-qp)/dt;
-        disp('t')
-        time
-        disp('qn')
-        qn
-        disp('ra')
-        ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7)) %task attuale
-
-        dr = (ra-rp)/dt;
-
-        g=get_GravityVector(qn);
-        c=get_CoriolisVector(qn,dq);
-        M=get_MassMatrix(qn);
-        J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
-        dJ=(J-Jp)/dt;
-
-        
-        %% GAINS
-        threshold = 0.17;   %PHI control starts at THETA=2.97
-        if rd1(time,4)>pi-threshold && rd1(time,4)<pi+threshold
-            disp('if')
-            Km(6,6)=0;
-            Dm(6,6)=0;
+    for traj=1:trajectories
+        if traj ==1
+            rd1=rd1;
+            drd=drd1;
+            ddrd=ddrd1;
         else
-            Km(6,6)=1;
-            Dm(6,6)=1;
+            rd1=rd2;
+            drd=drd2;
+            ddrd=ddrd2;
         end
+
+        t = 0;
+        time = 1;
+        while t<=T
+            for i=1:7
+                [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
+            end
     
-        %== possibile forma con check sulla forza di contatto ===========================
-        [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
-        
-        %control law
-        %u=M*pinv(J)*(ddrd(time,:)-dJ*dq+pinv(Mm)*(Dm*(drd(time,:)-dr)+Km*(rd1(time,:)-ra)))+c+g+transpose(J)*(Mr*pinv(Mm)-eye(6)*transpose([force,torque]))-Dq*dq;
-        u=M*pinv(J)*(transpose(ddrd(time,:))-dJ*transpose(dq))+c+g+transpose(J)*(Km*(transpose(rd1(time,:))-ra)+Dm*(transpose(drd(time,:))-dr))-Dq*transpose(dq);
-        % u=M*pinv(J)*(-dJ*dq)+c+g+transpose(J)*(Km*(rd-ra)+Dm*(-dr))-Dq*dq;
-        % u=M*pinv(J)*(ddrd-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd1-ra)+Dm*(drd-dr))-Dq*transpose(dq); %main
-
-
-        for i=1:7
-            if u(i)>0
-                sim.simxSetJointTargetVelocity(clientID,h(i),99999,sim.simx_opmode_oneshot);
+            dq=(qn-qp)/dt;
+            disp('t')
+            time
+            disp('qn')
+            qn
+            disp('ra')
+            ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7)) %task attuale
+    
+            dr = (ra-rp)/dt;
+    
+            g=get_GravityVector(qn);
+            c=get_CoriolisVector(qn,dq);
+            M=get_MassMatrix(qn);
+            J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+            dJ=(J-Jp)/dt;
+    
+            
+            %% GAINS
+            threshold = 0.17;   %PHI control starts at THETA=2.97
+            if rd1(time,4)>pi-threshold && rd1(time,4)<pi+threshold
+                disp('if')
+                Km(6,6)=0;
+                Dm(6,6)=0;
             else
-                sim.simxSetJointTargetVelocity(clientID,h(i),-99999,sim.simx_opmode_oneshot);
+                Km(6,6)=1;
+                Dm(6,6)=1;
             end
-            if abs(u(i))>100
-                u(i)=100;
-            end
-            sim.simxSetJointForce(clientID,h(i),abs(u(i)),sim.simx_opmode_oneshot);
-        end
-
-
-        % while true
-        %     if fz < 5
-        %         rd(3) = rd(3)-0.01;
-        %     else
-        %         break;
-        %     end
-        % end  
-        %============================================
-        % pause();
         
-        qp=qn;
-        rp=ra;
-        Jp=J;
-        t = t+dt;
-        time = time+1;
-        sim.simxSynchronousTrigger(clientID);
+            %== possibile forma con check sulla forza di contatto ===========================
+            [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
+            
+            %control law
+            %u=M*pinv(J)*(ddrd(time,:)-dJ*dq+pinv(Mm)*(Dm*(drd(time,:)-dr)+Km*(rd1(time,:)-ra)))+c+g+transpose(J)*(Mr*pinv(Mm)-eye(6)*transpose([force,torque]))-Dq*dq;
+            u=M*pinv(J)*(transpose(ddrd(time,:))-dJ*transpose(dq))+c+g+transpose(J)*(Km*(transpose(rd1(time,:))-ra)+Dm*(transpose(drd(time,:))-dr))-Dq*transpose(dq);
+            % u=M*pinv(J)*(-dJ*dq)+c+g+transpose(J)*(Km*(rd-ra)+Dm*(-dr))-Dq*dq;
+            % u=M*pinv(J)*(ddrd-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd1-ra)+Dm*(drd-dr))-Dq*transpose(dq); %main
+    
+    
+            for i=1:7
+                if u(i)>0
+                    sim.simxSetJointTargetVelocity(clientID,h(i),99999,sim.simx_opmode_oneshot);
+                else
+                    sim.simxSetJointTargetVelocity(clientID,h(i),-99999,sim.simx_opmode_oneshot);
+                end
+                if abs(u(i))>100
+                    u(i)=100;
+                end
+                sim.simxSetJointForce(clientID,h(i),abs(u(i)),sim.simx_opmode_oneshot);
+            end
+    
+    
+            % while true
+            %     if fz < 5
+            %         rd(3) = rd(3)-0.01;
+            %     else
+            %         break;
+            %     end
+            % end  
+            %============================================
+            % pause();
+            
+            qp=qn;
+            rp=ra;
+            Jp=J;
+            t = t+dt;
+            time = time+1;
+            sim.simxSynchronousTrigger(clientID);
+        end
     end
 
-    J_global = J;
-    dJ_global = dJ;
-    flag_trajectory = true;
 end
 
 
