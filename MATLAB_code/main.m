@@ -97,9 +97,9 @@ if (clientID>-1)
     check_xy = uiradiobutton(bg, "Text","Plane XY", "Position",[10, 10, 150, 25], "Value", true); 
     check_xz = uiradiobutton(bg, "Text","Plane XZ", "Position",[10, 40, 150, 25]); 
     button_home = uibutton(bg, "Position", [200, 40, 75, 25], "Text", "HOME", "ButtonPushedFcn", @(button_home, event)updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi));
+    button_trajectory = uibutton(bg, "Position", [290, 10, 150, 25], "Text", "EXECUTE TRAJECTORY", "ButtonPushedFcn", @(button_trajectory, event)trajectory_button(clientID,sim, button_trajectory));
     button_echo = uibutton(bg, "Position", [200, 10, 75, 25], "Text", "ECHO", "ButtonPushedFcn", @(button_echo, event)updateBtn_Echo(button_trajectory));
-    button_trajectory = uibutton(bg, "Position", [290, 10, 150, 25], "Text", "EXECUTE TRAJECTORY", "ButtonPushedFcn", @(button_trajectory, event)trajectory_button(clientID,sim));
-
+    
     button_up = uibutton(fig, "Position", [100, 300, 50, 50], "Text", "UP", "ButtonPushedFcn", @(button_up, event)updateBtn_Up(check_xy));
     button_down = uibutton(fig, "Position", [100, 100, 50, 50], "Text", "DOWN", "ButtonPushedFcn", @(button_down, event)updateBtn_Down(check_xy, SAFETY_VALUE));
     button_left = uibutton(fig, "Position", [50, 200, 50, 50], "Text", "LEFT", "ButtonPushedFcn", @(button_left, event)updateBtn_Left());
@@ -207,7 +207,7 @@ if (clientID>-1)
             updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi);
         end
         if buttons(4) == 1                                                 
-            updateBtn_Echo(); 
+            updateBtn_Echo(button_trajectory); 
         end
 
         if abs(axes(5))>=0.2 || abs(axes(4))>=0.2                          
@@ -419,6 +419,6 @@ function updateLabel(slider, label)
     label.Text = num2str(slider.Value, "%.2f");
 end
 
-function trajectory_button(clientID,sim)
+function trajectory_button(clientID,sim, button_trajectory)
     Copy_of_trajectory_function(clientID,sim, button_trajectory)
 end
