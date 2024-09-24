@@ -20,22 +20,23 @@ function Copy_of_trajectory_function(clientID,sim)
 
     %Simulation time
     dt=0.05;
-    T=4;
+    T=20;
     t=transpose(0:dt:T);
 
-    %A=0.001;
+    A=0.1;
     %Trajectory parametrization
     % rd1=[ones(length(t),1)*rd(1)+A*sin((2*pi)*t/T), ones(length(t),1)*rd(2)+A*cos((2*pi)*t/T).*sin((2*pi)*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4) ,ones(length(t),1)*rd(5), deg2rad(155)*sin((2*pi)/T*t)];
     % drd=[(2*pi)/(T)*A*cos((2*pi)*t/T), (2*pi)/T*A*(cos((2*pi)*t/T).^2-sin((2*pi)*t/T).^2),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),(2*pi)/T*deg2rad(155)*cos((2*pi)/T*t)];
     % ddrd=[-(2*pi)^2/(T^2)*A*sin((2*pi)*t/T), -(2*pi)^2/(T^2)*4*A*cos(t).*sin((2*pi)*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1),-(2*pi)^2/(T^2)*deg2rad(155)*sin((2*pi)/T*t)];
 
-    % rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
-    % drd = [zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
-    % ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
+    rd1 = [ones(length(t),1)*rd(1)+A*t/T,ones(length(t),1)*rd(2), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
+    drd = [ones(length(t),1)*A/T, zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
+    ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
 
-    rd1=rd
-    drd=zeros(6,1);
-    ddrd=zeros(6,1);
+    % rd1=rd
+    % rd1(1)=rd1(1)+0.1;
+    % drd=zeros(6,1);
+    % ddrd=zeros(6,1);
 
 
     %===inizializzazione parametri==========
@@ -66,24 +67,23 @@ function Copy_of_trajectory_function(clientID,sim)
 
         Km=[250,0,0,0,0,0;
            0,250,0,0,0,0;
-           0,0,75,0,0,0;
+           0,0,250,0,0,0;
            0,0,0,45,0,0;
            0,0,0,0,250,0;
            0,0,0,0,0,0];
         Dm=[500,0,0,0,0,0;
            0,500,0,0,0,0;
-           0,0,500,0,0,0;
+           0,0,300,0,0,0;
            0,0,0,8,0,0;
            0,0,0,0,650,0;
            0,0,0,0,0,0];
        
-        Dq=eye(7)*8;
+        Dq=eye(7)*0;
 
     %=============================
     t = 0;
     time = 1;
-    while t<=6
-        
+    while t<=T
         for i=1:7
             [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
         end
@@ -121,9 +121,9 @@ function Copy_of_trajectory_function(clientID,sim)
         
         %control law
         %u=M*pinv(J)*(ddrd(time,:)-dJ*dq+pinv(Mm)*(Dm*(drd(time,:)-dr)+Km*(rd1(time,:)-ra)))+c+g+transpose(J)*(Mr*pinv(Mm)-eye(6)*transpose([force,torque]))-Dq*dq;
-        % u=M*pinv(J)*(ddrd(time,:)-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd1(time,:)-ra)+Dm*(drd(time,:)-dr))-Dq*transpose(dq);
+        u=M*pinv(J)*(transpose(ddrd(time,:))-dJ*transpose(dq))+c+g+transpose(J)*(Km*(transpose(rd1(time,:))-ra)+Dm*(transpose(drd(time,:))-dr))-Dq*transpose(dq);
         % u=M*pinv(J)*(-dJ*dq)+c+g+transpose(J)*(Km*(rd-ra)+Dm*(-dr))-Dq*dq;
-        u=M*pinv(J)*(ddrd-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd1-ra)+Dm*(drd-dr))-Dq*transpose(dq); %main
+        % u=M*pinv(J)*(ddrd-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd1-ra)+Dm*(drd-dr))-Dq*transpose(dq); %main
 
 
         for i=1:7

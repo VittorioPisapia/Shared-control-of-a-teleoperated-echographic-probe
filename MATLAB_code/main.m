@@ -62,7 +62,7 @@ if (clientID>-1)
     label_D_z = uilabel(gain, "Position",[180, 160, 100 , 22], "Text", "Gain over Dz");
     ef_gainD_z = uieditfield(gain, "numeric", "Position", [180, 130, 50, 22], "Limits", [0, 1000], "Value", 500);
     label_D_theta = uilabel(gain, "Position",[180, 100, 100 , 22], "Text", "Gain over Dtheta");
-    ef_gainD_theta = uieditfield(gain, "numeric", "Position", [180, 70, 50, 22], "Limits", [0, 1000], "Value", 8);
+    ef_gainD_theta = uieditfield(gain, "numeric", "Position", [180, 70, 50, 22], "Limits", [0, 1000], "Value", 20);
     label_D_link4pos = uilabel(gain, "Position",[180, 40, 100 , 22], "Text", "Gain over D_link4");
     ef_gainD_link4pos = uieditfield(gain, "numeric", "Position", [180, 10, 50, 22], "Limits", [0, 1000], "Value", 650);
     
@@ -297,10 +297,10 @@ if (clientID>-1)
         c=get_CoriolisVector(qn,dq);
         M=get_MassMatrix(qn);
 
-        disp('qn')
-        qn
-        disp('rd')
-        rd
+        % disp('qn')
+        % qn;
+        % disp('rd')
+        % rd;
         
         u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(K*(rd-ra)-Dr*dr)-Dq*transpose(dq);
 
@@ -409,5 +409,5 @@ function updateLabel(slider, label)
 end
 
 function trajectory_button(clientID,sim)
-    trajectory_function(clientID,sim)
+    Copy_of_trajectory_function(clientID,sim)
 end
