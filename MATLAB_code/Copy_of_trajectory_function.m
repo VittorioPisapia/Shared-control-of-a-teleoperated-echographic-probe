@@ -1,4 +1,4 @@
-function trajectory_function(clientID,sim)
+function Copy_of_trajectory_function(clientID,sim)
     %trajectory tracking control law
 
     %this function returns the current desired task vector in order to make
@@ -23,17 +23,19 @@ function trajectory_function(clientID,sim)
     T=4;
     t=transpose(0:dt:T);
 
-    A=0.001;
+    %A=0.001;
     %Trajectory parametrization
     % rd1=[ones(length(t),1)*rd(1)+A*sin((2*pi)*t/T), ones(length(t),1)*rd(2)+A*cos((2*pi)*t/T).*sin((2*pi)*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4) ,ones(length(t),1)*rd(5), deg2rad(155)*sin((2*pi)/T*t)];
     % drd=[(2*pi)/(T)*A*cos((2*pi)*t/T), (2*pi)/T*A*(cos((2*pi)*t/T).^2-sin((2*pi)*t/T).^2),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),(2*pi)/T*deg2rad(155)*cos((2*pi)/T*t)];
     % ddrd=[-(2*pi)^2/(T^2)*A*sin((2*pi)*t/T), -(2*pi)^2/(T^2)*4*A*cos(t).*sin((2*pi)*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1),-(2*pi)^2/(T^2)*deg2rad(155)*sin((2*pi)/T*t)];
 
-    rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
-    drd = [zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
-    ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
+    % rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
+    % drd = [zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
+    % ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
 
-
+    rd1=rd
+    drd=zeros(6,1);
+    ddrd=zeros(6,1);
 
 
     %===inizializzazione parametri==========
@@ -44,7 +46,6 @@ function trajectory_function(clientID,sim)
     dq=zeros(7,1);
     J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
     Jp=J;
-    % rp=transpose(rd1(1,:));
     disp('disp r precedente  fuori for')
     rp = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7))
     disp('disp rd passato')
@@ -63,43 +64,20 @@ function trajectory_function(clientID,sim)
 
     %===Spazio per i gain ========
 
-        % Km=[250,0,0,0,0,0;
-        %    0,250,0,0,0,0;
-        %    0,0,75,0,0,0;
-        %    0,0,0,45,0,0;
-        %    0,0,0,0,250,0;
-        %    0,0,0,0,0,1];
-        % Dm=[500,0,0,0,0,0;
-        %    0,500,0,0,0,0;
-        %    0,0,500,0,0,0;
-        %    0,0,0,8,0,0;
-        %    0,0,0,0,650,0;
-        %    0,0,0,0,0,1];
-        % Mm=[50,0,0,0,0,0;
-        %    0,50,0,0,0,0;
-        %    0,0,50,0,0,0;
-        %    0,0,0,0,0,0;
-        %    0,0,0,0,0,0;
-        %    0,0,0,0,0,0];
         Km=[250,0,0,0,0,0;
            0,250,0,0,0,0;
            0,0,75,0,0,0;
-           0,0,0,0,0,0;
-           0,0,0,0,0,0;
+           0,0,0,45,0,0;
+           0,0,0,0,250,0;
            0,0,0,0,0,0];
-        Dm=[300,0,0,0,0,0;
-           0,300,0,0,0,0;
-           0,0,300,0,0,0;
-           0,0,0,0,0,0;
-           0,0,0,0,0,0;
+        Dm=[500,0,0,0,0,0;
+           0,500,0,0,0,0;
+           0,0,500,0,0,0;
+           0,0,0,8,0,0;
+           0,0,0,0,650,0;
            0,0,0,0,0,0];
-        Mm=[50,0,0,0,0,0;
-           0,50,0,0,0,0;
-           0,0,50,0,0,0;
-           0,0,0,0,0,0;
-           0,0,0,0,0,0;
-           0,0,0,0,0,0];
-        Dq=eye(7)*0;
+       
+        Dq=eye(7)*8;
 
     %=============================
     t = 0;
@@ -117,13 +95,6 @@ function trajectory_function(clientID,sim)
         qn
         disp('ra')
         ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7)) %task attuale
-        disp('rd1')
-        rd1(time,:)
-        disp('drd')
-        drd(time,:)
-        disp('ddrd')
-        ddrd(time,:)
-
 
         dr = (ra-rp)/dt;
 
@@ -133,8 +104,7 @@ function trajectory_function(clientID,sim)
         J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         dJ=(J-Jp)/dt;
 
-        Mr=pinv(J*pinv(M)*transpose(J));
-
+        
         %% GAINS
         threshold = 0.17;   %PHI control starts at THETA=2.97
         if rd1(time,4)>pi-threshold && rd1(time,4)<pi+threshold
@@ -148,13 +118,12 @@ function trajectory_function(clientID,sim)
     
         %== possibile forma con check sulla forza di contatto ===========================
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
-        %fz = -force(3);
         
         %control law
         %u=M*pinv(J)*(ddrd(time,:)-dJ*dq+pinv(Mm)*(Dm*(drd(time,:)-dr)+Km*(rd1(time,:)-ra)))+c+g+transpose(J)*(Mr*pinv(Mm)-eye(6)*transpose([force,torque]))-Dq*dq;
-        u=M*pinv(J)*(ddrd(time,:)-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd1(time,:)-ra)+Dm*(drd(time,:)-dr))-Dq*transpose(dq);
+        % u=M*pinv(J)*(ddrd(time,:)-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd1(time,:)-ra)+Dm*(drd(time,:)-dr))-Dq*transpose(dq);
         % u=M*pinv(J)*(-dJ*dq)+c+g+transpose(J)*(Km*(rd-ra)+Dm*(-dr))-Dq*dq;
-        % u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd-ra)-Dm*dr)-Dq*transpose(dq) %main
+        u=M*pinv(J)*(ddrd-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd1-ra)+Dm*(drd-dr))-Dq*transpose(dq); %main
 
 
         for i=1:7
