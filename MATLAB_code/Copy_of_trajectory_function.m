@@ -18,32 +18,6 @@ function Copy_of_trajectory_function(clientID,sim)
 
     [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
 
-    %Simulation time
-    dt=0.05;
-    T=20;
-    t=transpose(0:dt:T);
-
-    %Trajectory parametrization
-    % rd1=[ones(length(t),1)*rd(1)+A*sin((2*pi)*t/T), ones(length(t),1)*rd(2)+A*cos((2*pi)*t/T).*sin((2*pi)*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4) ,ones(length(t),1)*rd(5), deg2rad(155)*sin((2*pi)/T*t)];
-    % drd=[(2*pi)/(T)*A*cos((2*pi)*t/T), (2*pi)/T*A*(cos((2*pi)*t/T).^2-sin((2*pi)*t/T).^2),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),(2*pi)/T*deg2rad(155)*cos((2*pi)/T*t)];
-    % ddrd=[-(2*pi)^2/(T^2)*A*sin((2*pi)*t/T), -(2*pi)^2/(T^2)*4*A*cos(t).*sin((2*pi)*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1),-(2*pi)^2/(T^2)*deg2rad(155)*sin((2*pi)/T*t)];
-    
-    trajectories=2;
-    %trajectory 1
-    A=0.1;
-    rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2)+A*sin(2*pi*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
-    drd1 = [zeros(length(t),1), A*2*pi/T*cos(2*pi*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
-    ddrd1 = [zeros(length(t),1),-A*(2*pi/T)^2*sin(2*pi*t/T),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
-
-    %trajectory 2
-    B=2.97;
-    C=pi/2;
-    rd2 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),ones(length(t),1)*B,ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)+C*sin(2*pi*t/T)];
-    drd2 = [zeros(length(t),1),zeros(length(t),1), zeros(length(t),1), B*2*pi/T*cos(2*pi*t/T), zeros(length(t),1), C*2*pi/T*cos(2*pi*t/T)];
-    ddrd2 = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),-B*(2*pi/T)^2*sin(2*pi*t/T),zeros(length(t),1),-C*(2*pi/T)^2*sin(2*pi*t/T)];
-
-
-
     %===inizializzazione parametri==========
     for i=1:7
         [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
@@ -72,31 +46,58 @@ function Copy_of_trajectory_function(clientID,sim)
 
         Km=[250,0,0,0,0,0;
            0,250,0,0,0,0;
-           0,0,250,0,0,0;
+           0,0,75,0,0,0;
            0,0,0,45,0,0;
            0,0,0,0,250,0;
            0,0,0,0,0,0];
         Dm=[500,0,0,0,0,0;
            0,500,0,0,0,0;
-           0,0,300,0,0,0;
-           0,0,0,8,0,0;
+           0,0,500,0,0,0;
+           0,0,0,10,0,0;
            0,0,0,0,650,0;
            0,0,0,0,0,0];
        
         Dq=eye(7)*0;
 
     %=============================
+    trajectories=2;
     for traj=1:trajectories
         if traj ==1
-            rd1=rd1;
-            drd=drd1;
-            ddrd=ddrd1;
+            dt=0.05;
+            T=60;  
+            t=transpose(0:dt:T);
+            A=0.08;
+            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2)+A*sin(2*pi*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
+            drd = [zeros(length(t),1), A*2*pi/T*cos(2*pi*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
+            ddrd = [zeros(length(t),1),-A*(2*pi/T)^2*sin(2*pi*t/T),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
+        
         else
-            rd1=rd2;
-            drd=drd2;
-            ddrd=ddrd2;
-        end
+            dt=0.05;
+            T=40;  
+            t=transpose(0:dt:T);
+            B=2.97;
+            C=pi/2;
+            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),ones(length(t),1)*B,ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)+C*sin(2*pi*t/T)];
+            drd = [zeros(length(t),1),zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), C*2*pi/T*cos(2*pi*t/T)];
+            ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),-C*(2*pi/T)^2*sin(2*pi*t/T)];
 
+        %    t_1=10;
+        %    t_2=T-t_1;
+        %    for t_t =1:length(t)
+        % 
+        %        if t_t<t_1 
+        %            rd1(t_t, 4)=interp1([0, t_1], [rd(4),B], t_t);
+        %            drd(t_t,4)=-(pi-B)/t_1;
+        % 
+        %        elseif t_t>=t_1 && t_t<t_2
+        %            rd1(t_t, 4)=B;
+        % 
+        %        else
+        %            rd1(t_t, 4)=interp1([t_2, T], [B,rd(4)], t_t);
+        %            drd(t_t,4)=-(B-pi)/t_2;
+        %        end
+        %    end
+        % end
         t = 0;
         time = 1;
         while t<=T
