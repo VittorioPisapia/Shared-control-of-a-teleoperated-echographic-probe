@@ -4,7 +4,7 @@ function Copy_of_trajectory_function(clientID,sim)
     %this function returns the current desired task vector in order to make
     %the robot regulation control to not overcome discontinuities
     %OR make a periodic trajectory with end point = start point 
-    global rd
+    global rd flag_trajectory J_global dJ_global
     
     h=zeros(1,6);
     [r,h(1)]=sim.simxGetObjectHandle(clientID,'Franka_joint1',sim.simx_opmode_blocking);
@@ -157,6 +157,9 @@ function Copy_of_trajectory_function(clientID,sim)
         sim.simxSynchronousTrigger(clientID);
     end
 
+    J_global = J;
+    dJ_global = dJ;
+    flag_trajectory = true;
 end
 
 

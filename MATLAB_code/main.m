@@ -26,7 +26,7 @@ if (clientID>-1)
     [r,ForceSensor]=sim.simxGetObjectHandle(clientID,'Franka_connection',sim.simx_opmode_blocking);
 
 
-    global dx dy dz d ForceZ flag_doing_echo phi rd
+    global dx dy dz d ForceZ flag_doing_echo phi rd J_global dJ_global flag_trajectory
     dx = 0;
     dy = 0;
     dz = 0;
@@ -34,9 +34,11 @@ if (clientID>-1)
     ForceZ = 0;
     phi = 0;
     rd = zeros(6,1);
+    J_global = zeros(6,7);
+    dJ_global = zeros(6,7);
+    flag_trajectory = false;
 
     SAFETY_VALUE = 8;
-    flag_can_echo = true;
     flag_doing_echo = false;
 
     %% GUI
@@ -292,10 +294,17 @@ if (clientID>-1)
         sim.simxSetFloatSignal(clientID,'rd_z',rd(3),sim.simx_opmode_streaming);
 
         g=get_GravityVector(qn);
-        J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
-        dJ=(J-Jp)/dt;
         c=get_CoriolisVector(qn,dq);
         M=get_MassMatrix(qn);
+
+        if flag_trajectory
+            J = J_global;
+            dJ = dJ_global;
+            flag_trajectory = false;
+        else
+            J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+            dJ=(J-Jp)/dt;
+        end
 
         % disp('qn')
         % qn;
