@@ -1,4 +1,4 @@
-function Copy_of_trajectory_function(clientID,sim)
+function Copy_of_trajectory_function(clientID,sim, button_trajectory)
     %trajectory tracking control law
 
     %this function returns the current desired task vector in order to make
@@ -174,7 +174,7 @@ function Copy_of_trajectory_function(clientID,sim)
             sim.simxSynchronousTrigger(clientID);
         end
     end
-
+    button_trajectory.Enable = false;
 end
 
 

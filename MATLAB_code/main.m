@@ -97,7 +97,7 @@ if (clientID>-1)
     check_xy = uiradiobutton(bg, "Text","Plane XY", "Position",[10, 10, 150, 25], "Value", true); 
     check_xz = uiradiobutton(bg, "Text","Plane XZ", "Position",[10, 40, 150, 25]); 
     button_home = uibutton(bg, "Position", [200, 40, 75, 25], "Text", "HOME", "ButtonPushedFcn", @(button_home, event)updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi));
-    button_echo = uibutton(bg, "Position", [200, 10, 75, 25], "Text", "ECHO", "ButtonPushedFcn", @(button_echo, event)updateBtn_Echo());
+    button_echo = uibutton(bg, "Position", [200, 10, 75, 25], "Text", "ECHO", "ButtonPushedFcn", @(button_echo, event)updateBtn_Echo(button_trajectory));
     button_trajectory = uibutton(bg, "Position", [290, 10, 150, 25], "Text", "EXECUTE TRAJECTORY", "ButtonPushedFcn", @(button_trajectory, event)trajectory_button(clientID,sim));
 
     button_up = uibutton(fig, "Position", [100, 300, 50, 50], "Text", "UP", "ButtonPushedFcn", @(button_up, event)updateBtn_Up(check_xy));
@@ -107,6 +107,7 @@ if (clientID>-1)
 
     %% INITIALIZATION
 
+    button_trajectory.Enable = false;
     %%%%%%%%%%%
     %Aq=eye(7)*5;
     Dq=eye(7)*5;     
@@ -395,10 +396,11 @@ function updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,l
     flag_doing_echo = false;
 end
 
-function updateBtn_Echo()
+function updateBtn_Echo(button_trajectory)
     global dz ForceZ flag_doing_echo phi
     if ForceZ >= 5
         flag_doing_echo = false;
+        button_trajectory.Enable = true;
     else
         dz = dz-0.0001;
 
@@ -418,5 +420,5 @@ function updateLabel(slider, label)
 end
 
 function trajectory_button(clientID,sim)
-    Copy_of_trajectory_function(clientID,sim)
+    Copy_of_trajectory_function(clientID,sim, button_trajectory)
 end
