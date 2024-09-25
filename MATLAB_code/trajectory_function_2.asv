@@ -113,9 +113,10 @@ function trajectory_function_2(clientID,sim, button_trajectory_2)
             T=20;  
             t=transpose(0:dt:T);
             B=2.97;
-            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),(T-t)/T*(B-rd(4))+ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),zeros(length(t),1)];
-            drd = [zeros(length(t),1),zeros(length(t),1), zeros(length(t),1), -(B-rd(4))/T*ones(length(t),1), zeros(length(t),1), zeros(length(t),1)];
-            ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
+            C=pi/2;
+            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),ones(length(t),1)*B,ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)+C*sin(2*pi*t/T)];
+            drd = [zeros(length(t),1),zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), C*2*pi/T*cos(2*pi*t/T)];
+            ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),-C*(2*pi/T)^2*sin(2*pi*t/T)];
 
         end
         t = 0;

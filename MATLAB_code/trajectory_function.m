@@ -64,7 +64,7 @@ function trajectory_function(clientID,sim, button_trajectory)
     %=============================
   
     dt=0.05;
-    T=60;  
+    T=80;  
     t=transpose(0:dt:T);
     A=0.08;
     rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2)+A*sin(2*pi*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
