@@ -37,9 +37,9 @@ if (clientID>-1)
     J_global = zeros(6,7);
     dJ_global = zeros(6,7);
     flag_trajectory = false;
-
-    SAFETY_VALUE = 8;
     flag_doing_echo = false;
+    
+    SAFETY_VALUE = 8;
 
     %% GUI
     fig = uifigure("Name", "Controller", "Position", [100, 100, 900, 500]);
@@ -76,7 +76,6 @@ if (clientID>-1)
     label_D_phi = uilabel(gain, "Position",[300, 160, 100 , 22], "Text", "Gain Dphi");
     ef_gainD_phi = uieditfield(gain, "numeric", "Position", [300, 130, 50, 22], "Limits", [0, 1000], "Value", 1);
     
-
     % label_Aq= uilabel(gain, "Position",[300, 100, 100 , 22], "Text", "Gain over Aq");
     % ef_gainAq= uieditfield(gain, "numeric", "Position", [300, 80, 50, 22], "Limits", [0, 600], "Value", 0);
 
@@ -97,7 +96,8 @@ if (clientID>-1)
     check_xy = uiradiobutton(bg, "Text","Plane XY", "Position",[10, 10, 150, 25], "Value", true); 
     check_xz = uiradiobutton(bg, "Text","Plane XZ", "Position",[10, 40, 150, 25]); 
     button_home = uibutton(bg, "Position", [200, 40, 75, 25], "Text", "HOME", "ButtonPushedFcn", @(button_home, event)updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi));
-    button_trajectory = uibutton(bg, "Position", [290, 10, 150, 25], "Text", "EXECUTE TRAJECTORY", "ButtonPushedFcn", @(button_trajectory, event)trajectory_button(clientID,sim, button_trajectory));
+    button_trajectory = uibutton(bg, "Position", [290, 10, 155, 25], "Text", "EXECUTE TRAJECTORY 1", "ButtonPushedFcn", @(button_trajectory, event)trajectory_button_1(clientID,sim, button_trajectory));
+    button_trajectory_2 = uibutton(bg, "Position", [290, 40, 155, 25], "Text", "EXECUTE TRAJECTORY 2", "ButtonPushedFcn", @(button_trajectory_2, event)trajectory_button_2(clientID,sim, button_trajectory_2));
     button_echo = uibutton(bg, "Position", [200, 10, 75, 25], "Text", "ECHO", "ButtonPushedFcn", @(button_echo, event)updateBtn_Echo(button_trajectory));
     
     button_up = uibutton(fig, "Position", [100, 300, 50, 50], "Text", "UP", "ButtonPushedFcn", @(button_up, event)updateBtn_Up(check_xy));
@@ -108,6 +108,7 @@ if (clientID>-1)
     %% INITIALIZATION
 
     button_trajectory.Enable = false;
+    button_trajectory_2.Enable = false;
     %%%%%%%%%%%
     %Aq=eye(7)*5;
     Dq=eye(7)*5;     
@@ -239,6 +240,14 @@ if (clientID>-1)
         d = str2double(label_d.Text);
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
         ForceZ=-force(3);
+
+        if ForceZ >= 4.9                          %<-----Added by Emiliano
+            button_trajectory.Enable = true;
+            button_trajectory_2.Enable = true;
+        else
+            button_trajectory.Enable = false;
+            button_trajectory_2.Enable = false;
+        end
         
         %Check if modified rs is not undeground;
         if rs(3)+dz < 0   
@@ -400,7 +409,7 @@ function updateBtn_Echo(button_trajectory)
     global dz ForceZ flag_doing_echo phi
     if ForceZ >= 5
         flag_doing_echo = false;
-        button_trajectory.Enable = true;
+        %button_trajectory.Enable = true;
     else
         dz = dz-0.0001;
 
@@ -419,6 +428,10 @@ function updateLabel(slider, label)
     label.Text = num2str(slider.Value, "%.2f");
 end
 
-function trajectory_button(clientID,sim, button_trajectory)
-    Copy_of_trajectory_function(clientID,sim, button_trajectory)
+function trajectory_button_1(clientID,sim, button_trajectory)
+    trajectory_function(clientID,sim, button_trajectory)
+end
+
+function trajectory_button_2(clientID,sim, button_trajectory_2)
+    trajectory_function_2(clientID,sim, button_trajectory_2)
 end
