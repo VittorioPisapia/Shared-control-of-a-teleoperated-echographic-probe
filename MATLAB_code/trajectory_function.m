@@ -18,6 +18,8 @@ function trajectory_function(clientID,sim, button_trajectory)
 
     [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
 
+    joy = vrjoystick(1);
+
     %===inizializzazione parametri==========
     for i=1:7
         [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
@@ -93,8 +95,8 @@ function trajectory_function(clientID,sim, button_trajectory)
         J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         dJ=(J-Jp)/dt;
 
-
-        if buttons(6) == 1     %<----PRESS B TO STOP THE EXECUTION                                    
+        [axes,buttons] = read(joy)
+        if buttons(2) == 1     %<----PRESS B TO STOP THE EXECUTION                                    
             break
         end
 
