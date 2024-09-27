@@ -18,6 +18,8 @@ function trajectory_function(clientID,sim, button_trajectory)
 
     [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
 
+    joy = vrjoystick(1);
+
     %===inizializzazione parametri==========
     for i=1:7
         [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
@@ -27,9 +29,9 @@ function trajectory_function(clientID,sim, button_trajectory)
     J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
     Jp=J;
     disp('disp r precedente  fuori for')
-    rp = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7))
+    rp = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
     disp('disp rd passato')
-    rd
+    rd;
     
     for i=1:7
         sim.simxSetJointMaxForce(clientID,h(i),100,sim.simx_opmode_streaming);
@@ -53,49 +55,34 @@ function trajectory_function(clientID,sim, button_trajectory)
     Dm=[500,0,0,0,0,0;
        0,500,0,0,0,0;
        0,0,500,0,0,0;
-       0,0,0,10,0,0;
+       0,0,0,20,0,0;
        0,0,0,0,650,0;
        0,0,0,0,0,0];
    
-    Dq=eye(7)*0;
+    Dq=eye(7)*8;
 
     %=============================
-  
-    dt=0.05;
-    T=60;  
-    t=transpose(0:dt:T);
-    A=0.08;
-    rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2)+A*sin(2*pi*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
-    drd = [zeros(length(t),1), A*2*pi/T*cos(2*pi*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
-    ddrd = [zeros(length(t),1),-A*(2*pi/T)^2*sin(2*pi*t/T),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
-
+    trajectories=2;
+    for traj =1:trajectories
+        if traj ==1
+            dt=0.05;
+            T=40;  
+            t=transpose(0:dt:T);
+            A=0.065; % rp(2)-y1(2)
+            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2)+A*sin(pi*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
+            drd = [zeros(length(t),1), A*pi/T*cos(pi*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
+            ddrd = [zeros(length(t),1),-A*(pi/T)^2*sin(pi*t/T),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
         else
             dt=0.05;
             T=40;  
             t=transpose(0:dt:T);
-            B=2.97;
-            C=pi/2;
-            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),ones(length(t),1)*B,ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)+C*sin(2*pi*t/T)];
-            drd = [zeros(length(t),1),zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), C*2*pi/T*cos(2*pi*t/T)];
-            ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),-C*(2*pi/T)^2*sin(2*pi*t/T)];
-
-        %    t_1=10;
-        %    t_2=T-t_1;
-        %    for t_t =1:length(t)
-        % 
-        %        if t_t<t_1 
-        %            rd1(t_t, 4)=interp1([0, t_1], [rd(4),B], t_t,'linear');
-        %            drd(t_t,4)=-(pi-B)/t_1;
-        % 
-        %        elseif t_t>=t_1 && t_t<t_2
-        %            rd1(t_t, 4)=B;
-        % 
-        %        else
-        %            rd1(t_t, 4)=interp1([t_2, T], [B,rd(4)], t_t,'linear');
-        %            drd(t_t,4)=-(B-pi)/t_2;
-        %        end
-        %    end
+            A=-0.065;%    -( rp(2)-y2(2) )
+            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2)+A*sin(pi*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
+            drd = [zeros(length(t),1), A*pi/T*cos(pi*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
+            ddrd = [zeros(length(t),1),-A*(pi/T)^2*sin(pi*t/T),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
+        
         end
+        
         t = 0;
         time = 1;
         while t<=T
@@ -105,9 +92,9 @@ function trajectory_function(clientID,sim, button_trajectory)
     
             dq=(qn-qp)/dt;
             disp('t')
-            time
+            time;
             disp('qn')
-            qn
+            qn;
             disp('ra')
             ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7)) %task attuale
     
@@ -118,6 +105,12 @@ function trajectory_function(clientID,sim, button_trajectory)
             M=get_MassMatrix(qn);
             J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
             dJ=(J-Jp)/dt;
+    
+            [axes,buttons] = read(joy);
+            if buttons(2) == 1     %<----PRESS B TO STOP THE EXECUTION                                    
+                break
+            end
+    
     
             
             %% GAINS
@@ -152,17 +145,6 @@ function trajectory_function(clientID,sim, button_trajectory)
                 end
                 sim.simxSetJointForce(clientID,h(i),abs(u(i)),sim.simx_opmode_oneshot);
             end
-    
-    
-            % while true
-            %     if fz < 5
-            %         rd(3) = rd(3)-0.01;
-            %     else
-            %         break;
-            %     end
-            % end  
-            %============================================
-            % pause();
             
             qp=qn;
             rp=ra;
@@ -171,8 +153,8 @@ function trajectory_function(clientID,sim, button_trajectory)
             time = time+1;
             sim.simxSynchronousTrigger(clientID);
         end
+        button_trajectory.Enable = false;
     end
-    button_trajectory.Enable = false;
 end
 
 

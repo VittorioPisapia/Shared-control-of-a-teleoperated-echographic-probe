@@ -62,98 +62,101 @@ function trajectory_function(clientID,sim, button_trajectory)
     Dq=eye(7)*8;
 
     %=============================
-  
-    dt=0.05;
-    T=80;  
-    t=transpose(0:dt:T);
-    A=0.065;
-    rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2)+A*sin(2*pi*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
-    drd = [zeros(length(t),1), A*2*pi/T*cos(2*pi*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
-    ddrd = [zeros(length(t),1),-A*(2*pi/T)^2*sin(2*pi*t/T),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
 
-    
-    t = 0;
-    time = 1;
-    while t<=T
-        for i=1:7
-            [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
-        end
-
-        dq=(qn-qp)/dt;
-        disp('t')
-        time;
-        disp('qn')
-        qn;
-        disp('ra')
-        ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7)) %task attuale
-
-        dr = (ra-rp)/dt;
-
-        g=get_GravityVector(qn);
-        c=get_CoriolisVector(qn,dq);
-        M=get_MassMatrix(qn);
-        J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
-        dJ=(J-Jp)/dt;
-
-        [axes,buttons] = read(joy);
-        if buttons(2) == 1     %<----PRESS B TO STOP THE EXECUTION                                    
-            break
-        end
-
-
-        
-        %% GAINS
-        threshold = 0.17;   %PHI control starts at THETA=2.97
-        if rd1(time,4)>pi-threshold && rd1(time,4)<pi+threshold
-            disp('if')
-            Km(6,6)=0;
-            Dm(6,6)=0;
+    rp_fixed=rp;
+    trajectories=2;
+    for traj =1:trajectories
+        if traj ==1
+            dt=0.05;
+            T=40;  
+            t=transpose(0:dt:T);
+            A=0.065; % rp_fixed(2)-y1(2)
+            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2)+A*sin(pi*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
+            drd = [zeros(length(t),1), A*pi/T*cos(pi*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
+            ddrd = [zeros(length(t),1),-A*(pi/T)^2*sin(pi*t/T),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
         else
-            Km(6,6)=1;
-            Dm(6,6)=1;
+            dt=0.05;
+            T=40;  
+            t=transpose(0:dt:T);
+            A=-0.065;%    -( rp_fixed(2)-y2(2) )
+            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2)+A*sin(pi*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
+            drd = [zeros(length(t),1), A*pi/T*cos(pi*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
+            ddrd = [zeros(length(t),1),-A*(pi/T)^2*sin(pi*t/T),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
+        
         end
+        
+        t = 0;
+        time = 1;
+        while t<=T
+            for i=1:7
+                [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
+            end
     
-        %== possibile forma con check sulla forza di contatto ===========================
-        [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
-        
-        %control law
-        %u=M*pinv(J)*(ddrd(time,:)-dJ*dq+pinv(Mm)*(Dm*(drd(time,:)-dr)+Km*(rd1(time,:)-ra)))+c+g+transpose(J)*(Mr*pinv(Mm)-eye(6)*transpose([force,torque]))-Dq*dq;
-        u=M*pinv(J)*(transpose(ddrd(time,:))-dJ*transpose(dq))+c+g+transpose(J)*(Km*(transpose(rd1(time,:))-ra)+Dm*(transpose(drd(time,:))-dr))-Dq*transpose(dq);
-        % u=M*pinv(J)*(-dJ*dq)+c+g+transpose(J)*(Km*(rd-ra)+Dm*(-dr))-Dq*dq;
-        % u=M*pinv(J)*(ddrd-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd1-ra)+Dm*(drd-dr))-Dq*transpose(dq); %main
-
-
-        for i=1:7
-            if u(i)>0
-                sim.simxSetJointTargetVelocity(clientID,h(i),99999,sim.simx_opmode_oneshot);
+            dq=(qn-qp)/dt;
+            disp('t')
+            time;
+            disp('qn')
+            qn;
+            disp('ra')
+            ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7)) %task attuale
+    
+            dr = (ra-rp)/dt;
+    
+            g=get_GravityVector(qn);
+            c=get_CoriolisVector(qn,dq);
+            M=get_MassMatrix(qn);
+            J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+            dJ=(J-Jp)/dt;
+    
+            [axes,buttons] = read(joy);
+            if buttons(2) == 1     %<----PRESS B TO STOP THE EXECUTION                                    
+                break
+            end
+    
+    
+            
+            %% GAINS
+            threshold = 0.17;   %PHI control starts at THETA=2.97
+            if rd1(time,4)>pi-threshold && rd1(time,4)<pi+threshold
+                disp('if')
+                Km(6,6)=0;
+                Dm(6,6)=0;
             else
-                sim.simxSetJointTargetVelocity(clientID,h(i),-99999,sim.simx_opmode_oneshot);
+                Km(6,6)=1;
+                Dm(6,6)=1;
             end
-            if abs(u(i))>100
-                u(i)=100;
-            end
-            sim.simxSetJointForce(clientID,h(i),abs(u(i)),sim.simx_opmode_oneshot);
-        end
-
-
-        % while true
-        %     if fz < 5
-        %         rd(3) = rd(3)-0.01;
-        %     else
-        %         break;
-        %     end
-        % end  
-        %============================================
-        % pause();
         
-        qp=qn;
-        rp=ra;
-        Jp=J;
-        t = t+dt;
-        time = time+1;
-        sim.simxSynchronousTrigger(clientID);
+            %== possibile forma con check sulla forza di contatto ===========================
+            [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
+            
+            %control law
+            %u=M*pinv(J)*(ddrd(time,:)-dJ*dq+pinv(Mm)*(Dm*(drd(time,:)-dr)+Km*(rd1(time,:)-ra)))+c+g+transpose(J)*(Mr*pinv(Mm)-eye(6)*transpose([force,torque]))-Dq*dq;
+            u=M*pinv(J)*(transpose(ddrd(time,:))-dJ*transpose(dq))+c+g+transpose(J)*(Km*(transpose(rd1(time,:))-ra)+Dm*(transpose(drd(time,:))-dr))-Dq*transpose(dq);
+            % u=M*pinv(J)*(-dJ*dq)+c+g+transpose(J)*(Km*(rd-ra)+Dm*(-dr))-Dq*dq;
+            % u=M*pinv(J)*(ddrd-dJ*transpose(dq))+c+g+transpose(J)*(Km*(rd1-ra)+Dm*(drd-dr))-Dq*transpose(dq); %main
+    
+    
+            for i=1:7
+                if u(i)>0
+                    sim.simxSetJointTargetVelocity(clientID,h(i),99999,sim.simx_opmode_oneshot);
+                else
+                    sim.simxSetJointTargetVelocity(clientID,h(i),-99999,sim.simx_opmode_oneshot);
+                end
+                if abs(u(i))>100
+                    u(i)=100;
+                end
+                sim.simxSetJointForce(clientID,h(i),abs(u(i)),sim.simx_opmode_oneshot);
+            end
+            
+            qp=qn;
+            rp=ra;
+            Jp=J;
+            t = t+dt;
+            time = time+1;
+            sim.simxSynchronousTrigger(clientID);
+        end
+        button_trajectory.Enable = false;
     end
-    button_trajectory.Enable = false;
 end
 
 
