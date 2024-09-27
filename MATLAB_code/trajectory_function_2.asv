@@ -55,11 +55,11 @@ function trajectory_function_2(clientID,sim, button_trajectory_2)
     Dm=[500,0,0,0,0,0;
        0,500,0,0,0,0;
        0,0,500,0,0,0;
-       0,0,0,10,0,0;
+       0,0,0,20,0,0;
        0,0,0,0,650,0;
        0,0,0,0,0,0];
    
-    Dq=eye(7)*0;
+    Dq=eye(7)*8;
 
     % %=============================
     % dt=0.05;
@@ -87,24 +87,38 @@ function trajectory_function_2(clientID,sim, button_trajectory_2)
 %            drd(t_t,4)=-(B-rd(4))/t_2;
 %        end
 %    end
-    trajectories=3;
+    trajectories=4;
     for traj=1:trajectories
         if traj == 1
             dt=0.05;
             T=20;  
             t=transpose(0:dt:T);
-            B=2.97;
-            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),(T-t)/T*(rd(4)-B)+ones(length(t),1)*B,ones(length(t),1)*rd(5),zeros(length(t),1)];
+            B=2.98;
+            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),(T-t)/T*(rd(4)-B)+ones(length(t),1)*B,ones(length(t),1)*rd(5),zeros(length(t),1)*rd(6)];
             drd = [zeros(length(t),1),zeros(length(t),1), zeros(length(t),1), -(rd(4)-B)/T*ones(length(t),1), zeros(length(t),1), zeros(length(t),1)];
             ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
-
+            
         elseif traj == 2
+            for i=1:7
+                 [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming);
+            end
+            rat = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
             dt=0.05;
             T=40;  
             t=transpose(0:dt:T);
             B=2.97;
             C=pi/2;
-            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),ones(length(t),1)*B,ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)+C*sin(2*pi*t/T)];
+            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),ones(length(t),1)*B,ones(length(t),1)*rd(5),(T-t)/T*(rat(6)-0)];
+            drd = [zeros(length(t),1),zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), C*2*pi/T*cos(2*pi*t/T)];
+            ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),-C*(2*pi/T)^2*sin(2*pi*t/T)];
+            
+        elseif traj == 3
+            dt=0.05;
+            T=40;  
+            t=transpose(0:dt:T);
+            B=2.97;
+            C=pi/2;
+            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),ones(length(t),1)*B,ones(length(t),1)*rd(5),C*sin(2*pi*t/T)];
             drd = [zeros(length(t),1),zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), C*2*pi/T*cos(2*pi*t/T)];
             ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),-C*(2*pi/T)^2*sin(2*pi*t/T)];
 
@@ -113,10 +127,9 @@ function trajectory_function_2(clientID,sim, button_trajectory_2)
             T=20;  
             t=transpose(0:dt:T);
             B=2.97;
-            C=pi/2;
-            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),ones(length(t),1)*B,ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)+C*sin(2*pi*t/T)];
-            drd = [zeros(length(t),1),zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), C*2*pi/T*cos(2*pi*t/T)];
-            ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),-C*(2*pi/T)^2*sin(2*pi*t/T)];
+            rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2), ones(length(t),1)*rd(3),(T-t)/T*(B-rd(4))+ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),zeros(length(t),1)*rd(6)];
+            drd = [zeros(length(t),1),zeros(length(t),1), zeros(length(t),1), -(B-rd(4))/T*ones(length(t),1), zeros(length(t),1), zeros(length(t),1)];
+            ddrd = [zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
 
         end
         t = 0;
@@ -142,7 +155,7 @@ function trajectory_function_2(clientID,sim, button_trajectory_2)
             J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
             dJ=(J-Jp)/dt;
     
-           [axes,buttons] = read(joy)
+           [axes,buttons] = read(joy);
             if buttons(2) == 1     %<----PRESS B TO STOP THE EXECUTION                                    
                 break
             end

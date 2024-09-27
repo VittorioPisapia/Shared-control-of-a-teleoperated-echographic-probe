@@ -55,18 +55,18 @@ function trajectory_function(clientID,sim, button_trajectory)
     Dm=[500,0,0,0,0,0;
        0,500,0,0,0,0;
        0,0,500,0,0,0;
-       0,0,0,10,0,0;
+       0,0,0,20,0,0;
        0,0,0,0,650,0;
        0,0,0,0,0,0];
    
-    Dq=eye(7)*0;
+    Dq=eye(7)*8;
 
     %=============================
   
     dt=0.05;
     T=80;  
     t=transpose(0:dt:T);
-    A=0.08;
+    A=0.065;
     rd1 = [ones(length(t),1)*rd(1),ones(length(t),1)*rd(2)+A*sin(2*pi*t/T), ones(length(t),1)*rd(3), ones(length(t),1)*rd(4),ones(length(t),1)*rd(5),ones(length(t),1)*rd(6)];
     drd = [zeros(length(t),1), A*2*pi/T*cos(2*pi*t/T), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1), zeros(length(t),1)];
     ddrd = [zeros(length(t),1),-A*(2*pi/T)^2*sin(2*pi*t/T),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1),zeros(length(t),1)];
