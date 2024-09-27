@@ -141,7 +141,7 @@ function trajectory_function_2(clientID,sim, button_trajectory_2)
             J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
             dJ=(J-Jp)/dt;
     
-           [axes,buttons] = read(joy)
+           [axes,buttons] = read(joy);
             if buttons(2) == 1     %<----PRESS B TO STOP THE EXECUTION                                    
                 break
             end

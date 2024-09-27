@@ -210,6 +210,12 @@ if (clientID>-1)
         if buttons(4) == 1                                                 
             updateBtn_Echo(button_trajectory); 
         end
+        if buttons(1) == 1                                                 
+            trajectory_button_1(clientID,sim, button_trajectory)
+        end
+        if buttons(3) == 1                                                 
+            trajectory_button_2(clientID,sim, button_trajectory_2)
+        end
 
         if abs(axes(5))>=0.2 || abs(axes(4))>=0.2                          
     	    r3=round(-atan2(axes(5),axes(4)),2); 

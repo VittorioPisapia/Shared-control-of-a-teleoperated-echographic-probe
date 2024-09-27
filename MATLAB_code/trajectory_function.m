@@ -29,9 +29,9 @@ function trajectory_function(clientID,sim, button_trajectory)
     J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
     Jp=J;
     disp('disp r precedente  fuori for')
-    rp = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7))
+    rp = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
     disp('disp rd passato')
-    rd
+    rd;
     
     for i=1:7
         sim.simxSetJointMaxForce(clientID,h(i),100,sim.simx_opmode_streaming);
@@ -81,9 +81,9 @@ function trajectory_function(clientID,sim, button_trajectory)
 
         dq=(qn-qp)/dt;
         disp('t')
-        time
+        time;
         disp('qn')
-        qn
+        qn;
         disp('ra')
         ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7)) %task attuale
 
@@ -95,7 +95,7 @@ function trajectory_function(clientID,sim, button_trajectory)
         J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         dJ=(J-Jp)/dt;
 
-        [axes,buttons] = read(joy)
+        [axes,buttons] = read(joy);
         if buttons(2) == 1     %<----PRESS B TO STOP THE EXECUTION                                    
             break
         end
