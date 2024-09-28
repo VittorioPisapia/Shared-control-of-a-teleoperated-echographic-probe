@@ -50,11 +50,44 @@ Among the various tele-ultrasound systems, TER is a tele-robotic system consisti
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.5\textwidth]{TER.png}  
+    \includegraphics[width=0.7\textwidth]{TER.png}  
     \caption{TER architecture}
     \label{fig:ter}
 \end{figure}
 
+
+\subsection{The MELODY system}
+The system operates under a long-distance paradigm, allowing for remote teleoperated ultrasound examinations, such as from a central hospital to a local facility or an isolated location. This approach offers several advantages, including increased access to specialized healthcare for remote communities and more cost-effective service delivery.
+\\The system comprises three primary components: the expert system (master station), the patient system (slave station), and the communication link that facilitates data exchange between these two stations.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{MELODY.png}  
+    \caption{MELODY architecture}
+    \label{fig:melody}
+\end{figure}
+
+\subsection{The OTELO system}
+OTELO is a remotely controlled system designed to achieve reliable ultrasound imaging at an
+isolated site, distant from a specialist clinician. In particular it is a mobile tele-echography which uses an ultra-light robot and it is composed of three main parts:
+An "expert" site where the doctor interacts with a dedicated haptic probe to control the
+positioning of the remote robot. This probe emulates an ultrasound probe that medical experts
+are used to handle, thus providing a better ergonomy. The doctor receives also information
+about the contact force between the probe and the skin (a force sensor is positioned on the
+probe holder system).
+The satellite or terrestrial communication links.
+A "patient" station is made of the 6 DOF light-weight robotic system and its control unit.
+This robot manipulates an ultrasound probe according to orders sent by the medical expert
+and it is maintained by a nurse or a non-specialist assistant in echography. The paramedic
+positions and holds the robot on the patient’s skin following the instructions given by the
+medical expert by videoconference. Movements of the fictive probe are reproduced by the
+robot on the real probe.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{MELODY.png}  
+    \caption{MELODY architecture}
+    \label{fig:melody}
+\end{figure}
 
 \section{Development}
 
