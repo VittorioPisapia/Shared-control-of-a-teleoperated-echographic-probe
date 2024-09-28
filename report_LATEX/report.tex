@@ -42,8 +42,8 @@
 
 \section{Problem introduction}
 
-\section{State of the art}
-In this chapter, we will examine various works and systems related to tele-echography. Our focus will be on providing detailed descriptions of four specific systems. Additionally, we will mention other systems such as MIDSTEP, RUDS, SYRTECH, TERESA, and ESTELE.
+\section{State of the Art}
+In this chapter, we will examine various works and systems related to tele-echography. Our focus will be on providing detailed descriptions of three specific systems. 
 
 \subsection{The TER system}
 Among the various tele-ultrasound systems, TER is a tele-robotic system consisting of a master workstation (with or without force feedback control) and a slave robot operated remotely by a clinician to perform ultrasound-based diagnoses. The master system has been developed and tested with two approaches: one using a position sensor with visual feedback, and another incorporating a haptic device for force feedback. A unique feature of TER is its slave system, which is actuated by artificial muscles, giving it natural compliance.
@@ -63,31 +63,48 @@ The system operates under a long-distance paradigm, allowing for remote teleoper
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.7\textwidth]{MELODY.png}  
-    \caption{MELODY architecture}
+    \caption{The MELODY system}
     \label{fig:melody}
 \end{figure}
 
 \subsection{The OTELO system}
-OTELO is a remotely controlled system designed to achieve reliable ultrasound imaging at an
-isolated site, distant from a specialist clinician. In particular it is a mobile tele-echography which uses an ultra-light robot and it is composed of three main parts:
-An "expert" site where the doctor interacts with a dedicated haptic probe to control the
-positioning of the remote robot. This probe emulates an ultrasound probe that medical experts
-are used to handle, thus providing a better ergonomy. The doctor receives also information
-about the contact force between the probe and the skin (a force sensor is positioned on the
-probe holder system).
-The satellite or terrestrial communication links.
-A "patient" station is made of the 6 DOF light-weight robotic system and its control unit.
-This robot manipulates an ultrasound probe according to orders sent by the medical expert
-and it is maintained by a nurse or a non-specialist assistant in echography. The paramedic
-positions and holds the robot on the patient’s skin following the instructions given by the
-medical expert by videoconference. Movements of the fictive probe are reproduced by the
-robot on the real probe.
+OTELO is a remotely operated system designed to perform reliable ultrasound imaging at a distant, isolated location without the need for a specialist clinician on-site. It is a mobile tele-echography solution utilizing an ultra-light robot, comprising three key components:
+
+%\renewcommand{\labelitemi}{-}
+
+\begin{itemize}
+\item The expert site, where a doctor controls the positioning of the remote robot using a dedicated haptic probe. This probe mimics the feel and function of a traditional ultrasound probe, familiar to medical professionals, enhancing ergonomic comfort. The doctor also receives feedback on the contact force between the probe and the patient's skin, thanks to a force sensor located in the probe holder system.
+\item The communication link, which can be either satellite or terrestrial, facilitates data transmission between the two locations.
+The patient station, consisting of a lightweight 6-degree-of-freedom robotic system and its control unit. \item This robot manipulates the ultrasound probe in response to commands from the medical expert. It is maintained by a nurse or a non-specialist assistant, who positions and holds the robot on the patient’s skin under the guidance of the doctor via videoconference. The robot replicates the movements of the virtual probe on the real ultrasound probe.
+\end{itemize}
+
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{MELODY.png}  
-    \caption{MELODY architecture}
-    \label{fig:melody}
+    \includegraphics[width=0.7\textwidth]{OTELO.png}  
+    \caption{The OTELO system}
+    \label{fig:otelo}
 \end{figure}
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{OTELO_structure.png}  
+    \caption{Mechanical structure of OTELO 1}
+    \label{fig:otelo struc}
+\end{figure}
+
+\subsection{A previous project on related work}
+Our colleagues implemented an impedance control system for a manipulator designed to perform a tele-echography task. The simulated manipulator is equipped with an ultrasound probe that interacts with an abdominal phantom. Starting from an initial position above the phantom, the probe approaches the abdomen perpendicularly and then slides across its surface while maintaining low contact forces.
+
+\paragraph{Limitations:}
+\begin{itemize}
+\item The previous work did not fully achieve teleoperated motion under shared control, as it was limited to implementing pre-defined trajectories.
+\item The robot's redundancy was not utilized to keep its structure at a safe distance from the patient, which is important for ensuring optimal safety during task execution.
+\item No force/torque sensors were used in CoppeliaSim to measure the contact forces during the simulation.
+\end{itemize}
+\par
+
+
 
 \section{Development}
 
