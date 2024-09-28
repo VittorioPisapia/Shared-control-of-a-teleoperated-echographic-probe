@@ -72,9 +72,6 @@ if (clientID>-1)
     ef_gainK_phi = uieditfield(gain, "numeric", "Position", [300, 190, 50, 22], "Limits", [0, 1000], "Value", 1);  
     label_D_phi = uilabel(gain, "Position",[300, 160, 100 , 22], "Text", "Gain Dphi");
     ef_gainD_phi = uieditfield(gain, "numeric", "Position", [300, 130, 50, 22], "Limits", [0, 1000], "Value", 1);
-    
-    % label_Aq= uilabel(gain, "Position",[300, 100, 100 , 22], "Text", "Gain over Aq");
-    % ef_gainAq= uieditfield(gain, "numeric", "Position", [300, 80, 50, 22], "Limits", [0, 600], "Value", 0);
 
     label_d = uilabel(fig, "Position",[420, 320, 100 , 22], "Text", "0.01");
     label_d_name = uilabel(fig, "Position",[300, 320, 100 , 22], "Text", "Slider Magnitude:");
@@ -107,7 +104,6 @@ if (clientID>-1)
     button_trajectory.Enable = false;
     button_trajectory_2.Enable = false;
     %%%%%%%%%%%
-    %Aq=eye(7)*5;
     Dq=eye(7)*5;     
     Dr=eye(6);
     K=eye(6);
@@ -162,8 +158,6 @@ if (clientID>-1)
     sim.simxSetFloatSignal(clientID,'rd_x',rd(1),sim.simx_opmode_streaming);
     sim.simxSetFloatSignal(clientID,'rd_y',rd(2),sim.simx_opmode_streaming);
     sim.simxSetFloatSignal(clientID,'rd_z',rd(3),sim.simx_opmode_streaming);
-    T1=sim.simxGetFloatSignal(clientID,'T1',sim.simx_opmode_streaming);
-    T2=sim.simxGetFloatSignal(clientID,'T2',sim.simx_opmode_streaming);
 
     %% FORCE SENSOR 
     [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
@@ -185,9 +179,9 @@ if (clientID>-1)
             dx = dx-0.001*abs(axes(1));                                    %  Select Button: return in HOME position;
         end                                                                %  Y Button : puts end-effector in ECHO position;                                                    
         if axes(1)>0.1                                                     %  RB/LB Buttons: Change THETA;
-            dx = dx+0.001*abs(axes(1));                                    %  A Button: Starts linear trajectory
-        end                                                                %  X Button: Starts wirst trajectory
-        if axes(2)<-0.1
+            dx = dx+0.001*abs(axes(1));                                    %  A Button: Starts linear trajectory;
+        end                                                                %  X Button: Starts wirst trajectory;
+        if axes(2)<-0.1                                                    %  B Button: Stops the trajectory;
             dy = dy+0.001*abs(axes(2));
         end
         if axes(2)>0.1
@@ -302,9 +296,6 @@ if (clientID>-1)
         sim.simxSetFloatSignal(clientID,'rd_y',rd(2),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'rd_z',rd(3),sim.simx_opmode_streaming);
 
-        y1=sim.simxGetFloatSignal(clientID,'T1',sim.simx_opmode_buffer)
-        y2=sim.simxGetFloatSignal(clientID,'T2',sim.simx_opmode_buffer)
-
         g=get_GravityVector(qn);
         c=get_CoriolisVector(qn,dq);
         M=get_MassMatrix(qn);
@@ -320,18 +311,20 @@ if (clientID>-1)
         
         u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(K*(rd-ra)-Dr*dr)-Dq*transpose(dq);
 
-        if buttons(1) == 1                                                 
-            % trajectory_button_1(clientID,sim, button_trajectory)
-            trajectory_function(clientID,sim, button_trajectory)
+        if buttons(1) == 1
+            disp('Executing linear trajectory');
+            trajectory_button_1(clientID,sim, button_trajectory)
+            %trajectory_function(clientID,sim, button_trajectory)
             for i=1:7  
                 [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_buffer);   
             end
             ra = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
             J = EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         end
-        if buttons(3) == 1                                                 
-            % trajectory_button_2(clientID,sim, button_trajectory_2)
-            trajectory_function_2(clientID,sim, button_trajectory_2)
+        if buttons(3) == 1  
+            disp('Executing wrist trajectory.');
+            trajectory_button_2(clientID,sim, button_trajectory_2)
+            %trajectory_function_2(clientID,sim, button_trajectory_2)
             for i=1:7  
                 [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_buffer);   
             end
@@ -341,7 +334,6 @@ if (clientID>-1)
       
         rp = ra;
         qp=qn;
-        %dqp=dq;
         Jp=J;
 
         for i=1:7
