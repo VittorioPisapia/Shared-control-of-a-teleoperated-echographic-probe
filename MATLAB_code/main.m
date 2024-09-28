@@ -280,10 +280,8 @@ if (clientID>-1)
         end
 
         dq=(qn-qp)/dt;
-        %p_e = DKnum(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         dr = (ra-rp)/dt;
-        %ddq = (dq-dqp)/dt;
         
         e = rd-ra;
         sim.simxSetFloatSignal(clientID,'error_x',e(1),sim.simx_opmode_streaming);
@@ -302,12 +300,6 @@ if (clientID>-1)
 
         J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         dJ=(J-Jp)/dt;
-
-
-        % disp('qn')
-        % qn;
-        % disp('rd')
-        % rd;
         
         u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(K*(rd-ra)-Dr*dr)-Dq*transpose(dq);
 
