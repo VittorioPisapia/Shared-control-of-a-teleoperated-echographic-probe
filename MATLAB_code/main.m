@@ -316,7 +316,7 @@ if (clientID>-1)
         J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         dJ=(J-Jp)/dt;
         
-        u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(K*(rd-ra)-Dr*dr)-Dq*transpose(dq)
+        u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(K*(rd-ra)-Dr*dr)-Dq*transpose(dq);
 
         if buttons(1) == 1
             disp('Executing linear trajectory');
