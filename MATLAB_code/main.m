@@ -36,7 +36,7 @@ if (clientID>-1)
     rd = zeros(6,1);
     flag_doing_echo = false;
     
-    SAFETY_VALUE = 8; % corresponds to 15N
+    SAFETY_VALUE = 7; % corresponds to 15N
 
     %% GUI
     fig = uifigure("Name", "Controller", "Position", [100, 100, 900, 500]);
