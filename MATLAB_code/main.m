@@ -113,6 +113,7 @@ if (clientID>-1)
     Jp=zeros(6,7);
     dt=0.05;
     e=[0,0,0,0,0,0];
+    u=zeros(7,1);
 
     %CONTROLLER INIZIALIZATION
     joy = vrjoystick(1);
@@ -158,6 +159,13 @@ if (clientID>-1)
     sim.simxSetFloatSignal(clientID,'rd_x',rd(1),sim.simx_opmode_streaming);
     sim.simxSetFloatSignal(clientID,'rd_y',rd(2),sim.simx_opmode_streaming);
     sim.simxSetFloatSignal(clientID,'rd_z',rd(3),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'u_1',u(1),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'u_2',u(2),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'u_3',u(3),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'u_4',u(4),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'u_5',u(5),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'u_6',u(6),sim.simx_opmode_streaming);
+    sim.simxSetFloatSignal(clientID,'u_7',u(7),sim.simx_opmode_streaming);
 
     %% FORCE SENSOR 
     [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
@@ -293,6 +301,13 @@ if (clientID>-1)
         sim.simxSetFloatSignal(clientID,'rd_x',rd(1),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'rd_y',rd(2),sim.simx_opmode_streaming);
         sim.simxSetFloatSignal(clientID,'rd_z',rd(3),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'u_1',u(1),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'u_2',u(2),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'u_3',u(3),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'u_4',u(4),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'u_5',u(5),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'u_6',u(6),sim.simx_opmode_streaming);
+        sim.simxSetFloatSignal(clientID,'u_7',u(7),sim.simx_opmode_streaming);
 
         g=get_GravityVector(qn);
         c=get_CoriolisVector(qn,dq);
@@ -301,7 +316,7 @@ if (clientID>-1)
         J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         dJ=(J-Jp)/dt;
         
-        u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(K*(rd-ra)-Dr*dr)-Dq*transpose(dq);
+        u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(K*(rd-ra)-Dr*dr)-Dq*transpose(dq)
 
         if buttons(1) == 1
             disp('Executing linear trajectory');
