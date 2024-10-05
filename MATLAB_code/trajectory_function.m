@@ -160,7 +160,12 @@ function trajectory_function(clientID,sim, button_trajectory)
         end
         button_trajectory.Enable = false;
     end
-    disp('Linear trajectory completed.')
+    if outside_flag == true
+        return
+    end
+    if exit_flag == false
+        disp('Linear trajectory completed.')
+    end
 end
 
 

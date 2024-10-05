@@ -165,6 +165,8 @@ function trajectory_function_2(clientID,sim, button_trajectory_2)
         end
         button_trajectory_2.Enable = false;
     end
-    disp('Wrist trajectory completed.')
+    if exit_flag==false
+        disp('Wrist trajectory completed.')
+    end
 end        
 

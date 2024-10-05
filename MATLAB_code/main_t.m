@@ -33,11 +33,10 @@ if (clientID>-1)
     d = 0.05;
     ForceZ = 0;
     phi = 0;
-    rd = zeros(6,1);
+    rd = zeros(7,1);
     flag_doing_echo = false;
     
     SAFETY_VALUE = 7; % corresponds to 15N
-    threshold = 0.17;
 
     %% GUI
     fig = uifigure("Name", "Controller", "Position", [100, 100, 900, 500]);
@@ -50,8 +49,12 @@ if (clientID>-1)
     ef_gainK_y = uieditfield(gain,"numeric", "Position", [10, 190, 50, 22], "Limits", [0, 1000], "Value", 250);
     label_K_z = uilabel(gain, "Position",[10, 160, 100 , 22], "Text", "Gain over Kz");
     ef_gainK_z = uieditfield(gain, "numeric", "Position", [10, 130, 50, 22], "Limits", [0, 1000], "Value", 75);
+    label_K_phi = uilabel(gain, "Position",[300, 220, 100 , 22], "Text", "Gain Kphi");
+    ef_gainK_phi = uieditfield(gain, "numeric", "Position", [300, 190, 50, 22], "Limits", [0, 1000], "Value", 1);  
     label_K_theta = uilabel(gain, "Position",[10, 100, 100 , 22], "Text", "Gain over Ktheta");
-    ef_gainK_theta = uieditfield(gain, "numeric", "Position", [10, 70, 50, 22], "Limits", [0, 1000], "Value", 45);
+    ef_gainK_theta = uieditfield(gain, "numeric", "Position", [10, 70, 50, 22], "Limits", [0, 1000], "Value", 1);
+    label_K_psy = uilabel(gain, "Position",[300, 100, 100 , 22], "Text", "Gain over Ktheta");
+    ef_gainK_psy = uieditfield(gain, "numeric", "Position", [300, 70, 50, 22], "Limits", [0, 1000], "Value",1);
     label_K_link4pos = uilabel(gain, "Position",[10, 40, 100 , 22], "Text", "Gain over K_link4");
     ef_gainK_link4pos = uieditfield(gain, "numeric", "Position", [10, 10, 50, 22], "Limits", [0, 1000], "Value", 250);
     
@@ -61,33 +64,34 @@ if (clientID>-1)
     ef_gainD_y = uieditfield(gain, "numeric", "Position", [180, 190, 50, 22], "Limits", [0, 1000], "Value", 500);
     label_D_z = uilabel(gain, "Position",[180, 160, 100 , 22], "Text", "Gain over Dz");
     ef_gainD_z = uieditfield(gain, "numeric", "Position", [180, 130, 50, 22], "Limits", [0, 1000], "Value", 500);
+    label_D_phi = uilabel(gain, "Position",[300, 160, 100 , 22], "Text", "Gain Dphi");
+    ef_gainD_phi = uieditfield(gain, "numeric", "Position", [300, 130, 50, 22], "Limits", [0, 1000], "Value", 1);
     label_D_theta = uilabel(gain, "Position",[180, 100, 100 , 22], "Text", "Gain over Dtheta");
-    ef_gainD_theta = uieditfield(gain, "numeric", "Position", [180, 70, 50, 22], "Limits", [0, 1000], "Value", 20);
+    ef_gainD_theta = uieditfield(gain, "numeric", "Position", [180, 70, 50, 22], "Limits", [0, 1000], "Value", 1);
+    label_D_psy = uilabel(gain, "Position",[300, 40, 100 , 22], "Text", "Gain over Dtheta");
+    ef_gainD_psy = uieditfield(gain, "numeric", "Position", [300, 10, 50, 22], "Limits", [0, 1000], "Value", 1);   
     label_D_link4pos = uilabel(gain, "Position",[180, 40, 100 , 22], "Text", "Gain over D_link4");
     ef_gainD_link4pos = uieditfield(gain, "numeric", "Position", [180, 10, 50, 22], "Limits", [0, 1000], "Value", 650);
     
     label_Dq = uilabel(gain, "Position",[300, 280, 100 , 22], "Text", "Gain over Dq");
     ef_gainDq = uieditfield(gain, "numeric", "Position", [300, 250, 50, 22], "Limits", [0, 600], "Value", 8);
-    
-    label_K_phi = uilabel(gain, "Position",[300, 220, 100 , 22], "Text", "Gain Kphi");
-    ef_gainK_phi = uieditfield(gain, "numeric", "Position", [300, 190, 50, 22], "Limits", [0, 1000], "Value", 1);  
-    label_D_phi = uilabel(gain, "Position",[300, 160, 100 , 22], "Text", "Gain Dphi");
-    ef_gainD_phi = uieditfield(gain, "numeric", "Position", [300, 130, 50, 22], "Limits", [0, 1000], "Value", 1);
 
     label_d = uilabel(fig, "Position",[420, 320, 100 , 22], "Text", "0.01");
     label_d_name = uilabel(fig, "Position",[300, 320, 100 , 22], "Text", "Slider Magnitude:");
     slider_d = uislider(fig, "Position", [300, 100, 200, 3], "Limits", [0.001, 0.1],"Value", 0.01, "ValueChangedFcn",@(slider_d,event)updateLabel(slider_d,label_d), "Orientation", "vertical");
 
-    label_theta = uilabel(fig, "Position",[500, 100, 100 , 22], "Text", "3.14");
-    label_theta_name = uilabel(fig, "Position",[400, 100, 100 , 22], "Text", "Theta Angle:");
-    slider_theta = uislider(fig, "Position", [550, 100, 200, 3], "Limits", [pi-deg2rad(30), pi],"Value", pi, "ValueChangedFcn",@(slider_theta,event)updateLabel(slider_theta,label_theta));
+    label_theta = uilabel(fig, "Position",[500, 140, 100 , 22], "Text", "3.14");
+    label_theta_name = uilabel(fig, "Position",[400, 140, 100 , 22], "Text", "Theta Angle:");
+    slider_theta = uislider(fig, "Position", [550, 140, 200, 3], "Limits", [-deg2rad(15), deg2rad(15)],"Value", 0, "ValueChangedFcn",@(slider_theta,event)updateLabel(slider_theta,label_theta));
     
-    label_phi = uilabel(fig, "Position",[500, 40, 100 , 22], "Text", "0.00");
-    label_phi_name = uilabel(fig, "Position",[400, 40, 100 , 22], "Text", "Phi Angle:");
-    slider_phi = uislider(fig, "Position", [550, 40, 200, 3], "Limits", [-pi+deg2rad(25), pi-deg2rad(25)],"Value", 0.00, "ValueChangedFcn",@(slider_phi,event)updateLabel(slider_phi,label_phi));
+    label_phi = uilabel(fig, "Position",[500, 80, 100 , 22], "Text", "0.00");
+    label_phi_name = uilabel(fig, "Position",[400, 80, 100 , 22], "Text", "Phi Angle:");
+    slider_phi = uislider(fig, "Position", [550, 80, 200, 3], "Limits", [-2.2-deg2rad(15),-2.2+deg2rad(15)],"Value", -2.2, "ValueChangedFcn",@(slider_phi,event)updateLabel(slider_phi,label_phi));
     
-    label_threshold = uilabel(fig, "Position",[100, 60, 100 , 22], "Text", "Threshold");
-    ef_threshold = uieditfield(fig, "numeric", "Position", [100, 300, 50, 22], "Limits", [0, 0.17], "Value", 0.17);
+    label_psy = uilabel(fig, "Position",[500, 30, 100 , 22], "Text", "0.00");
+    label_psy_name = uilabel(fig, "Position",[400, 30, 100 , 22], "Text", "Psy Angle:");
+    slider_psy = uislider(fig, "Position", [550, 30, 200, 3], "Limits", [pi-deg2rad(30), pi],"Value", pi, "ValueChangedFcn",@(slider_psy,event)updateLabel(slider_psy,label_psy));
+    
 
     bg = uibuttongroup(fig, "Title","Tools", "Position",[10, 400, 450, 100]);
     check_xy = uiradiobutton(bg, "Text","Plane XY", "Position",[10, 10, 150, 25], "Value", true); 
@@ -108,14 +112,14 @@ if (clientID>-1)
     button_trajectory_2.Enable = false;
     %%%%%%%%%%%
     Dq=eye(7)*5;     
-    Dr=eye(6);
-    K=eye(6);
+    Dr=eye(7);
+    K=eye(7);
     qp=zeros(7,1); 
     dq=zeros(7);
     dqp=zeros(7);   
-    Jp=zeros(6,7);
+    Jp=zeros(7,7);
     dt=0.05;
-    e=[0,0,0,0,0,0];
+    e=[0,0,0,0,0,0,0];
     u=zeros(7,1);
 
     %CONTROLLER INIZIALIZATION
@@ -123,11 +127,11 @@ if (clientID>-1)
 
     %%%%%%%%%%%
     %start position
-    rs=[+0.42425; -0.00701; +0.83639;pi;+0.64828;0];
+    rs=[+0.42425; -0.00701; +0.83639;-2.2006;0;pi;+0.64828];
     rd=rs;
     
-    dr=[0;0;0;0;0;0];
-    rp=[0;0;0;0;0;0];
+    dr=[0;0;0;0;0;0;0];
+    rp=[0;0;0;0;0;0;0];
 
     %% FLUSH THE BUFFER
 
@@ -141,9 +145,16 @@ if (clientID>-1)
             [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_streaming); 
     end
     qp=qn;
-    J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+    J=JacobianRPY(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
     Jp=J;
-    rp =EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+    rp =TaskRPY(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7))
+
+    slider_phi.Value=rd(4);
+    slider_theta.Value=rd(5);
+    slider_psy.Value=rd(6);
+    label_phi.Text=num2str(rd(4));
+    label_theta.Text=num2str(rd(5));
+    label_psy.Text=num2str(rd(6));
 
     for i=1:7
         sim.simxSetJointMaxForce(clientID,h(i),100,sim.simx_opmode_streaming);
@@ -215,14 +226,14 @@ if (clientID>-1)
         end
 
 
-        if abs(axes(5))>=0.2 || abs(axes(4))>=0.2                          
-    	    r3=round(-atan2(axes(5),axes(4)),2); 
-            if r3>(-pi+deg2rad(25)) && r3<(pi-deg2rad(25))
-                phi = r3;
-                slider_phi.Value = r3;
-                updateLabel(slider_phi,label_phi);
-            end
-        end    
+        % if abs(axes(5))>=0.2 || abs(axes(4))>=0.2                          
+    	%     r3=round(-atan2(axes(5),axes(4)),2); 
+        %     if r3>(-pi+deg2rad(25)) && r3<(pi-deg2rad(25))
+        %         phi = r3;
+        %         slider_phi.Value = r3;
+        %         updateLabel(slider_phi,label_phi);
+        %     end
+        % end    
         
         if buttons(5) == 1                                          
             if str2double(label_theta.Text)<=pi - 0.02
@@ -240,12 +251,12 @@ if (clientID>-1)
         %%%%%%%%%%%%%%%
 
 
-        label_phi.Text = num2str(phi);
+        % label_phi.Text = num2str(phi);
         d = str2double(label_d.Text);
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
         ForceZ=-force(3);
 
-        if ForceZ >= 4.9                          %<-----Added by Emiliano
+        if ForceZ >= 4.9                          
             button_trajectory.Enable = true;
             button_trajectory_2.Enable = true;
         else
@@ -258,48 +269,34 @@ if (clientID>-1)
             dz=-rs(3);  
         end
 
-        rd=rs+[dx;dy;dz;0;0;0];
+        rd=rs+[dx;dy;dz;0;0;0;0];
+        rd(4)=str2double(label_phi.Text);
+        rd(5)=str2double(label_theta.Text);
+        rd(6)=str2double(label_psy.Text);
         
-        if str2double(label_theta.Text) < pi && str2double(label_theta.Text)>=pi-threshold
-            rt = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
-            if rt(6)>=-pi && rt(6)<=-pi+deg2rad(25)
-                disp('rt(6)>-pi && rt(6)<=-pi+deg2rad(25)')
-                slider_phi.Value = -pi+deg2rad(25);
-                label_phi.Text = num2str(-pi+deg2rad(25));
-            elseif rt(6)<pi && rt(6)>=pi-deg2rad(25)
-                disp('rt(6)<pi && rt(6)>=pi-deg2rad(25)')
-                slider_phi.Value = pi-deg2rad(25);
-                label_phi.Text = num2str(pi-deg2rad(25));
-            else
-                slider_phi.Value = double(rt(6));
-                label_phi.Text = num2str(rt(6));
-            end
-        end
-
-        rd(4)=str2double(label_theta.Text);
-        rd(6)=str2double(label_phi.Text);
+        % threshold = 0.17;   %PHI control starts at THETA=2.97
+        % if rd(4)>pi-threshold && rd(4)<pi+threshold
+        %     Kphi=0;
+        %     Dphi=0;
+        % else
+        %     Kphi=ef_gainK_phi.Value;
+        %     Dphi=ef_gainD_phi.Value;
+        % end
         
-        %PHI control starts at THETA=2.97
-        if rd(4)>pi-threshold && rd(4)<pi+threshold
-            Kphi=0;
-            Dphi=0;
-        else
-            Kphi=ef_gainK_phi.Value;
-            Dphi=ef_gainD_phi.Value;
-        end
-        
-        K=[ef_gainK_x.Value,0,0,0,0,0;
-           0,ef_gainK_y.Value,0,0,0,0;
-           0,0,ef_gainK_z.Value,0,0,0;
-           0,0,0,ef_gainK_theta.Value,0,0;
-           0,0,0,0,ef_gainK_link4pos.Value,0;
-           0,0,0,0,0,Kphi];
-        Dr=[ef_gainD_x.Value,0,0,0,0,0;
-           0,ef_gainD_y.Value,0,0,0,0;
-           0,0,ef_gainD_z.Value,0,0,0;
-           0,0,0,ef_gainD_theta.Value,0,0;
-           0,0,0,0,ef_gainD_link4pos.Value,0;
-           0,0,0,0,0,Dphi];
+        K=[ef_gainK_x.Value,0,0,0,0,0,0;
+           0,ef_gainK_y.Value,0,0,0,0,0;
+           0,0,ef_gainK_z.Value,0,0,0,0;
+           0,0,0,ef_gainK_phi.Value,0,0,0;
+           0,0,0,0,ef_gainK_theta.Value,0,0;
+           0,0,0,0,0,ef_gainK_psy.Value,0;
+           0,0,0,0,0,0,ef_gainK_link4pos.Value];
+        Dr=[ef_gainD_x.Value,0,0,0,0,0,0;
+           0,ef_gainD_y.Value,0,0,0,0,0;
+           0,0,ef_gainD_z.Value,0,0,0,0;
+           0,0,0,ef_gainD_phi.Value,0,0,0;
+           0,0,0,0,ef_gainD_theta.Value,0,0;
+           0,0,0,0,0,ef_gainD_psy.Value,0;
+           0,0,0,0,0,0,ef_gainD_link4pos.Value];
         Dq=eye(7)*ef_gainDq.Value;
         %Aq=eye(7)*ef_gainAq.Value;
 
@@ -308,7 +305,7 @@ if (clientID>-1)
         end
 
         dq=(qn-qp)/dt;
-        ra=EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+        ra=TaskRPY(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         dr = (ra-rp)/dt;
         
         e = rd-ra;
@@ -333,7 +330,7 @@ if (clientID>-1)
         c=get_CoriolisVector(qn,dq);
         M=get_MassMatrix(qn);
 
-        J=EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+        J=JacobianRPY(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         dJ=(J-Jp)/dt;
         
         u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(K*(rd-ra)-Dr*dr)-Dq*transpose(dq);
@@ -345,8 +342,8 @@ if (clientID>-1)
             for i=1:7  
                 [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_buffer);   
             end
-            ra = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
-            J = EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+            ra = TaskRPY(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+            J = JacobianRPY(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         end
         if buttons(3) == 1  
             disp('Executing wrist trajectory.');
@@ -355,8 +352,8 @@ if (clientID>-1)
             for i=1:7  
                 [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_buffer);   
             end
-            ra = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
-            J = EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+            ra = TaskRPY(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+            J = JacobianRPY(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         end
       
         rp = ra;
@@ -394,8 +391,6 @@ function updateBtn_Down(check_xy,SAFETY_VALUE)
     if check_xy.Value==1
         dy = dy-d;
     else 
-        disp('Force Z letta')
-        disp(ForceZ);
         if ForceZ<SAFETY_VALUE
             dz = dz-d;
         end

@@ -37,6 +37,7 @@ if (clientID>-1)
     flag_doing_echo = false;
     
     SAFETY_VALUE = 7; % corresponds to 15N
+    threshold = 0.17;
 
     %% GUI
     fig = uifigure("Name", "Controller", "Position", [100, 100, 900, 500]);
@@ -85,6 +86,8 @@ if (clientID>-1)
     label_phi_name = uilabel(fig, "Position",[400, 40, 100 , 22], "Text", "Phi Angle:");
     slider_phi = uislider(fig, "Position", [550, 40, 200, 3], "Limits", [-pi+deg2rad(25), pi-deg2rad(25)],"Value", 0.00, "ValueChangedFcn",@(slider_phi,event)updateLabel(slider_phi,label_phi));
     
+    label_threshold = uilabel(fig, "Position",[100, 60, 100 , 22], "Text", "threshold");
+    ef_threshold = uieditfield(fig, "numeric", "Position", [100, 30, 50, 22], "Limits", [0, 0.17], "Value", 0.17);
 
     bg = uibuttongroup(fig, "Title","Tools", "Position",[10, 400, 450, 100]);
     check_xy = uiradiobutton(bg, "Text","Plane XY", "Position",[10, 10, 150, 25], "Value", true); 
@@ -242,7 +245,7 @@ if (clientID>-1)
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
         ForceZ=-force(3);
 
-        if ForceZ >= 4.9                          %<-----Added by Emiliano
+        if ForceZ >= 4.9                          
             button_trajectory.Enable = true;
             button_trajectory_2.Enable = true;
         else
@@ -256,10 +259,26 @@ if (clientID>-1)
         end
 
         rd=rs+[dx;dy;dz;0;0;0];
+        threshold = ef_threshold.Value;
+        
+        if str2double(label_theta.Text) < pi-0.01 && str2double(label_theta.Text)>=pi-threshold
+            rt = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+            if rt(6)>=-pi && rt(6)<=-pi+deg2rad(25)
+                slider_phi.Value = -pi+deg2rad(25);
+                label_phi.Text = num2str(-pi+deg2rad(25));
+            elseif rt(6)<pi && rt(6)>=pi-deg2rad(25)
+                slider_phi.Value = pi-deg2rad(25);
+                label_phi.Text = num2str(pi-deg2rad(25));
+            else
+                slider_phi.Value = double(rt(6));
+                label_phi.Text = num2str(rt(6));
+            end
+        end
+
         rd(4)=str2double(label_theta.Text);
         rd(6)=str2double(label_phi.Text);
         
-        threshold = 0.17;   %PHI control starts at THETA=2.97
+        %PHI control starts at THETA=2.97
         if rd(4)>pi-threshold && rd(4)<pi+threshold
             Kphi=0;
             Dphi=0;
@@ -374,8 +393,6 @@ function updateBtn_Down(check_xy,SAFETY_VALUE)
     if check_xy.Value==1
         dy = dy-d;
     else 
-        disp('Force Z letta')
-        disp(ForceZ);
         if ForceZ<SAFETY_VALUE
             dz = dz-d;
         end
