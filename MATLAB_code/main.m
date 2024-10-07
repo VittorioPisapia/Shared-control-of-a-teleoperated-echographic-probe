@@ -6,7 +6,6 @@ sim=remApi('remoteApi'); % using the prototype file (remoteApiProto.m)
 sim.simxFinish(-1); % just in case, close all opened connections
 clientID=sim.simxStart('127.0.0.1',19997,true,true,5000,5);
 
-
 if (clientID>-1)
     sim.simxSynchronous(clientID,true)
     sim.simxStartSimulation(clientID,sim.simx_opmode_blocking)
@@ -119,7 +118,12 @@ if (clientID>-1)
     u=zeros(7,1);
 
     %CONTROLLER INIZIALIZATION
-    joy = vrjoystick(1);
+    try
+        joy = vrjoystick(1);
+        controller_check = 1;
+    catch
+        controller_check = 0;
+    end
 
     %%%%%%%%%%%
     %start position
@@ -174,7 +178,7 @@ if (clientID>-1)
     [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_streaming);
 
     %% SIMULATION LOOP
-
+    
     while true
 
         drawnow;
@@ -183,60 +187,60 @@ if (clientID>-1)
         if flag_doing_echo
             updateBtn_Echo(button_trajectory);
         end                                                                %  Xbox controller inputs
-         
-        % CONTROLLER INPUT                                                 %  Right Analog Stick: Move end-effector on XY plane;
-        [axes,buttons] = read(joy);                                        %  Left Analog Stick : Changes PHI;
-        if axes(1)<-0.1                                                    %  RT/LT Buttons: Change Z of end-effector;
-            dx = dx-0.001*abs(axes(1));                                    %  Select Button: return in HOME position;
-        end                                                                %  Y Button : puts end-effector in ECHO position;                                                    
-        if axes(1)>0.1                                                     %  RB/LB Buttons: Change THETA;
-            dx = dx+0.001*abs(axes(1));                                    %  A Button: Starts linear trajectory;
-        end                                                                %  X Button: Starts wirst trajectory;
-        if axes(2)<-0.1                                                    %  B Button: Stops the trajectory;
-            dy = dy+0.001*abs(axes(2));
-        end
-        if axes(2)>0.1
-            dy = dy-0.001*abs(axes(2));
-        end
-        if axes(3)>0.05                                                    
-            dz = dz+0.001*abs(axes(3));
-        end
-        if axes(3)<-0.5
-            if ForceZ<SAFETY_VALUE
-                dz = dz-0.001*abs(axes(3));
+        if controller_check == 1  
+            % CONTROLLER INPUT                                                 %  Right Analog Stick: Move end-effector on XY plane;
+            [axes,buttons] = read(joy);                                        %  Left Analog Stick : Changes PHI;
+            if axes(1)<-0.1                                                    %  RT/LT Buttons: Change Z of end-effector;
+                dx = dx-0.001*abs(axes(1));                                    %  Select Button: return in HOME position;
+            end                                                                %  Y Button : puts end-effector in ECHO position;                                                    
+            if axes(1)>0.1                                                     %  RB/LB Buttons: Change THETA;
+                dx = dx+0.001*abs(axes(1));                                    %  A Button: Starts linear trajectory;
+            end                                                                %  X Button: Starts wirst trajectory;
+            if axes(2)<-0.1                                                    %  B Button: Stops the trajectory;
+                dy = dy+0.001*abs(axes(2));
+            end
+            if axes(2)>0.1
+                dy = dy-0.001*abs(axes(2));
+            end
+            if axes(3)>0.05                                                    
+                dz = dz+0.001*abs(axes(3));
+            end
+            if axes(3)<-0.5
+                if ForceZ<SAFETY_VALUE
+                    dz = dz-0.001*abs(axes(3));
+                end
+            end
+    
+            if buttons(8) == 1                                                 
+                updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi);
+            end
+            if buttons(4) == 1                                                 
+                updateBtn_Echo(button_trajectory); 
+            end
+    
+    
+            if abs(axes(5))>=0.2 || abs(axes(4))>=0.2                          
+    	        r3=round(-atan2(axes(5),axes(4)),2); 
+                if r3>(-pi+deg2rad(25)) && r3<(pi-deg2rad(25))
+                    phi = r3;
+                    slider_phi.Value = r3;
+                    updateLabel(slider_phi,label_phi);
+                end
+            end    
+            
+            if buttons(5) == 1                                          
+                if str2double(label_theta.Text)<=pi - 0.02
+                    slider_theta.Value =  slider_theta.Value + 0.01;
+                    updateLabel(slider_theta,label_theta);
+                end
+            end
+            if buttons(6) == 1
+                if str2double(label_theta.Text)>=pi-deg2rad(30) + 0.02 
+                    slider_theta.Value =  slider_theta.Value - 0.01;
+                    updateLabel(slider_theta,label_theta);
+                end
             end
         end
-
-        if buttons(8) == 1                                                 
-            updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi);
-        end
-        if buttons(4) == 1                                                 
-            updateBtn_Echo(button_trajectory); 
-        end
-
-
-        if abs(axes(5))>=0.2 || abs(axes(4))>=0.2                          
-    	    r3=round(-atan2(axes(5),axes(4)),2); 
-            if r3>(-pi+deg2rad(25)) && r3<(pi-deg2rad(25))
-                phi = r3;
-                slider_phi.Value = r3;
-                updateLabel(slider_phi,label_phi);
-            end
-        end    
-        
-        if buttons(5) == 1                                          
-            if str2double(label_theta.Text)<=pi - 0.02
-                slider_theta.Value =  slider_theta.Value + 0.01;
-                updateLabel(slider_theta,label_theta);
-            end
-        end
-        if buttons(6) == 1
-            if str2double(label_theta.Text)>=pi-deg2rad(30) + 0.02 
-                slider_theta.Value =  slider_theta.Value - 0.01;
-                updateLabel(slider_theta,label_theta);
-            end
-        end
-
         %%%%%%%%%%%%%%%
 
 
@@ -263,6 +267,7 @@ if (clientID>-1)
         
         if str2double(label_theta.Text) < pi-0.01 && str2double(label_theta.Text)>=pi-threshold
             rt = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+            slider_phi.Enable = false;
             if rt(6)>=-pi && rt(6)<=-pi+deg2rad(25)
                 slider_phi.Value = -pi+deg2rad(25);
                 label_phi.Text = num2str(-pi+deg2rad(25));
@@ -273,7 +278,15 @@ if (clientID>-1)
                 slider_phi.Value = double(rt(6));
                 label_phi.Text = num2str(rt(6));
             end
+        else
+            if theta == 3.14
+                slider_phi.Enable = false;
+            else
+                slider_phi.Enable = true;
+            end
         end
+
+
 
         rd(4)=str2double(label_theta.Text);
         rd(6)=str2double(label_phi.Text);
@@ -336,28 +349,28 @@ if (clientID>-1)
         dJ=(J-Jp)/dt;
         
         u=M*pinv(J)*(-dJ*transpose(dq))+c+g+transpose(J)*(K*(rd-ra)-Dr*dr)-Dq*transpose(dq);
-
-        if buttons(1) == 1
-            disp('Executing linear trajectory');
-            trajectory_button_1(clientID,sim, button_trajectory)
-            %trajectory_function(clientID,sim, button_trajectory)
-            for i=1:7  
-                [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_buffer);   
+        if controller_check == 1
+            if buttons(1) == 1
+                disp('Executing linear trajectory');
+                trajectory_button_1(clientID,sim, button_trajectory)
+                %trajectory_function(clientID,sim, button_trajectory)
+                for i=1:7  
+                    [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_buffer);   
+                end
+                ra = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+                J = EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
             end
-            ra = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
-            J = EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
-        end
-        if buttons(3) == 1  
-            disp('Executing wrist trajectory.');
-            trajectory_button_2(clientID,sim, button_trajectory_2)
-            %trajectory_function_2(clientID,sim, button_trajectory_2)
-            for i=1:7  
-                [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_buffer);   
+            if buttons(3) == 1  
+                disp('Executing wrist trajectory.');
+                trajectory_button_2(clientID,sim, button_trajectory_2)
+                %trajectory_function_2(clientID,sim, button_trajectory_2)
+                for i=1:7  
+                    [r,qn(i)]=sim.simxGetJointPosition(clientID,h(i),sim.simx_opmode_buffer);   
+                end
+                ra = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
+                J = EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
             end
-            ra = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
-            J = EulerJacobianPose(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
         end
-      
         rp = ra;
         qp=qn;
         Jp=J;
