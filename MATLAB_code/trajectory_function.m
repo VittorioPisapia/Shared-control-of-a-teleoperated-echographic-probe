@@ -101,7 +101,7 @@ function trajectory_function(clientID,sim, button_trajectory)
         while t<=T
 
             if rp_fixed(2)<min(y1,y2) || rp_fixed(2)>max(y1,y2)            %initial check
-                disp('Y coordinate of the probe is outside the keypoints!')
+                warning('Y coordinate of the probe is outside the keypoints!')
                 outside_flag = true;
                 break
             end

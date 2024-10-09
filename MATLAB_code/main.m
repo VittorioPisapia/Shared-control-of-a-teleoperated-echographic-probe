@@ -25,7 +25,7 @@ if (clientID>-1)
     [r,ForceSensor]=sim.simxGetObjectHandle(clientID,'Franka_connection',sim.simx_opmode_blocking);
 
     %GlobalVariables inizialitazion
-    global dx dy dz d ForceZ flag_doing_echo phi rd
+    global dx dy dz d ForceZ flag_doing_echo phi rd echo_value
     dx = 0;
     dy = 0;
     dz = 0;
@@ -34,8 +34,9 @@ if (clientID>-1)
     phi = 0;
     rd = zeros(6,1);
     flag_doing_echo = false;
+    echo_value = 0;
     
-    SAFETY_VALUE = 7; % corresponds to 15N
+    SAFETY_VALUE = 7; % Max jump corresponds to 15N
     threshold = 0.17;
 
     %% GUI
@@ -85,13 +86,13 @@ if (clientID>-1)
     label_phi_name = uilabel(fig, "Position",[400, 40, 100 , 22], "Text", "Phi Angle:");
     slider_phi = uislider(fig, "Position", [550, 40, 200, 3], "Limits", [-pi+deg2rad(25), pi-deg2rad(25)],"Value", 0.00, "ValueChangedFcn",@(slider_phi,event)updateLabel(slider_phi,label_phi));
     
-    label_threshold = uilabel(fig, "Position",[100, 60, 100 , 22], "Text", "threshold");
-    ef_threshold = uieditfield(fig, "numeric", "Position", [100, 30, 50, 22], "Limits", [0, 0.17], "Value", 0.17);
+    label_echo_force = uilabel(fig, "Position",[100, 60, 100 , 22], "Text", "Echo Value");
+    ef_echo_force = uieditfield(fig, "numeric", "Position", [100, 30, 50, 22], "Limits", [0, 10], "Value", 5);
 
     bg = uibuttongroup(fig, "Title","Tools", "Position",[10, 400, 450, 100]);
     check_xy = uiradiobutton(bg, "Text","Plane XY", "Position",[10, 10, 150, 25], "Value", true); 
     check_xz = uiradiobutton(bg, "Text","Plane XZ", "Position",[10, 40, 150, 25]); 
-    button_home = uibutton(bg, "Position", [200, 40, 75, 25], "Text", "HOME", "ButtonPushedFcn", @(button_home, event)updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi));
+    button_home = uibutton(bg, "Position", [200, 40, 75, 25], "Text", "HOME", "ButtonPushedFcn", @(button_home, event)updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi,ef_echo_force));
     button_trajectory = uibutton(bg, "Position", [290, 10, 155, 25], "Text", "EXECUTE TRAJECTORY 1", "ButtonPushedFcn", @(button_trajectory, event)trajectory_button_1(clientID,sim, button_trajectory));
     button_trajectory_2 = uibutton(bg, "Position", [290, 40, 155, 25], "Text", "EXECUTE TRAJECTORY 2", "ButtonPushedFcn", @(button_trajectory_2, event)trajectory_button_2(clientID,sim, button_trajectory_2));
     button_echo = uibutton(bg, "Position", [200, 10, 75, 25], "Text", "ECHO", "ButtonPushedFcn", @(button_echo, event)updateBtn_Echo(button_trajectory));
@@ -243,13 +244,14 @@ if (clientID>-1)
         end
         %%%%%%%%%%%%%%%
 
+        echo_value = ef_echo_force.Value;
 
         label_phi.Text = num2str(phi);
         d = str2double(label_d.Text);
         [r, state, force, torque] = sim.simxReadForceSensor(clientID, ForceSensor, sim.simx_opmode_buffer);
         ForceZ=-force(3);
 
-        if ForceZ >= 4.9                          
+        if ForceZ >= echo_value-0.2                         
             button_trajectory.Enable = true;
             button_trajectory_2.Enable = true;
         else
@@ -263,9 +265,9 @@ if (clientID>-1)
         end
 
         rd=rs+[dx;dy;dz;0;0;0];
-        threshold = ef_threshold.Value;
         
-        if str2double(label_theta.Text) < pi-0.01 && str2double(label_theta.Text)>=pi-threshold
+        
+        if str2double(label_theta.Text) < pi && str2double(label_theta.Text)>=pi-threshold
             rt = EulerTaskVector(qn(1),qn(2),qn(3),qn(4),qn(5),qn(6),qn(7));
             slider_phi.Enable = false;
             if rt(6)>=-pi && rt(6)<=-pi+deg2rad(25)
@@ -279,11 +281,7 @@ if (clientID>-1)
                 label_phi.Text = num2str(rt(6));
             end
         else
-            if theta == 3.14
-                slider_phi.Enable = false;
-            else
-                slider_phi.Enable = true;
-            end
+                 slider_phi.Enable = true;
         end
 
 
@@ -422,7 +420,7 @@ function updateBtn_Right()
     dx = dx+d;
 end    
 
-function updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi)
+function updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,label_d,ef_gainK_x,ef_gainK_y,ef_gainK_z,ef_gainK_theta,ef_gainK_link4pos,ef_gainD_x,ef_gainD_y,ef_gainD_z,ef_gainD_theta,ef_gainD_link4pos,ef_gainDq,check_xy,ef_gainK_phi,ef_gainD_phi,ef_echo_force)
     global dx dy dz flag_doing_echo
     dx = 0;
     dy = 0;
@@ -446,13 +444,14 @@ function updateBtn_Home(slider_theta,label_theta,slider_phi,label_phi,slider_d,l
     ef_gainD_link4pos.Value = 650;
     ef_gainD_phi.Value = 1;
     ef_gainDq.Value = 8;
+    ef_echo_force.Value = 5;
     check_xy.Value = true;
     flag_doing_echo = false;
 end
 
 function updateBtn_Echo(button_trajectory)
-    global dz ForceZ flag_doing_echo phi
-    if ForceZ >= 5
+    global dz ForceZ flag_doing_echo phi echo_value
+    if ForceZ >= echo_value
         flag_doing_echo = false;
         %button_trajectory.Enable = true;
     else
