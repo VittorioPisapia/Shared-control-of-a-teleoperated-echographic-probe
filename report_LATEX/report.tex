@@ -11,7 +11,8 @@
 \renewcommand{\baselinestretch}{2}
 \usepackage{hyperref}  % Optional for clickable ToC
 \usepackage{ulem} 
-\author{Paradiso Emiliano,  \quad 1940454 \\Vittorio Pisapia,  \quad 1918590 \\Brian Piccione, \quad da scrivere}
+\usepackage{caption} % per usare \caption fuori dall'ambiente figure
+\author{Paradiso Emiliano,  \quad 1940454 \\Piccione Brian, \quad 1889051 \\Pisapia Vittorio,  \quad 1918590 }
 \title{\Huge Medical Robotics project \\ \centering \Large \textbf{Shared control of a teleoperated echographic probe}}
 
 \hypersetup{
@@ -24,16 +25,25 @@
   {\normalfont\LARGE\bfseries} 
   {}                           
   {0pt}                      
-  {\LARGE}              
-
+  {\LARGE}        
+   
 \begin{document}
+
+\date{}
 \maketitle
-\vspace{2cm}
+\vspace{-1cm}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{Approach.png}  
+    %\caption{}
+    %\label{Approach}
+\end{figure}
 
 \begin{abstract}
 %% SCRIVI L'ABSTRACT
 \hspace*{-0.5cm}In this work, we aim to design a robust control law for tracking a periodic joint space trajectory for a 3R spatial manipulator, based on bounds on its dynamic coefficients. To achieve this, we will derive the dynamic model and extract a linear parameterization in terms of a minimal set of dynamic coefficients. We will then apply robust control theory to the case in exam. Additionally, we will conduct simulations to evaluate the performance of our designed control law, highlighting the main benefits of robust control in contrast to a classic control law such as feedback linearization under both ideal and uncertain conditions.
-\\GitHub link: \uline{\href{https://github.com/VittorioPisapia/Medical-Robotics/tree/main}{Project GitHub}}
+\\GitHub link: \uline{\href{https://github.com/VittorioPisapia/Medical-Robotics/tree/main}{https://github.com/VittorioPisapia/Medical-Robotics/tree/main}}
 \end{abstract}
 
 \newpage
@@ -41,6 +51,14 @@
 \newpage
 
 \section{Problem introduction}
+Echography, or ultrasound imaging, is a widely used medical technique with applications in cardiology, abdominal imaging, and fetal monitoring during pregnancy. It is highly valued because it is non-invasive and generally safe for people of all ages.
+However, the quality and accuracy of echography are often operator-dependent, meaning they rely heavily on the skill and experience of the person performing the scan. Different operators may produce varying results. Additionally, operators may not always follow the exact same path or apply consistent pressure, leading to variability in image quality, particularly in follow-up examinations, where consistency is crucial for monitoring changes in a patient's condition over time.
+These limitations are a primary reason why robot-assisted echography is gaining popularity. Robotic systems are designed to operate with precise control, ensuring consistent pressure application and accurate movement paths during the scan. 
+However, despite its advantages over conventional echography, robot-assisted echography is still under development and tends to be more costly than its traditional counterpart. One of the key challenges in developing a robot-assisted echography system is controlling the probe during the echographic task. Although forces must be exchanged to perform the scan, the contact forces between the robot and the patient must be limited to ensure the patient’s safety. This can be done by implementing an impedance control law.
+A crucial improvement in this area is the implementation of shared control systems, which facilitate the remote operation of echographic probes by expert clinicians. Shared control refers to a collaborative approach where both the human operator and the robotic system work together to perform a task. This paradigm enhances the efficiency, safety, and precision of teleoperated procedures by leveraging the strengths of both human intuition and robotic accuracy.
+The clinician can intervene in real time to adjust the probe's position or to focus on specific areas of interest, while the robot ensures that movements are executed smoothly and safely. This balance of control not only improves the quality of the ultrasound examination but also alleviates the physical strain on the operator.
+This report will explore the underlying principles and advantages of this technology. We will examine the impact of shared control on the workflow of tele-echographic procedures and its implications for future developments in robotic-assisted medical applications. Through this exploration, we aim to highlight the critical role that shared control plays in advancing the field of telemedicine and improving patient outcomes.
+
 
 \section{State of the Art}
 In this chapter, we will examine various works and systems related to tele-echography. Our focus will be on providing detailed descriptions of three specific systems. 
@@ -104,9 +122,80 @@ Our colleagues implemented an impedance control system for a manipulator designe
 \end{itemize}
 \par
 
-
-
 \section{Development}
+This section outlines the approach used to achieve the task, with a particular emphasis on the formal formulation of the control law, the implementation of shared control, and a brief explanation of the implemented trajectories.
+
+\subsection{Task definition}
+To ensure a safe and accurate scan, the task vector is defined as a 6-component vector. The first three components represent the x, y, and z cartesian coordinates of the end-effector, which are determined using the robot's direct kinematics. The fourth element corresponds to the z-coordinate (expressed in the world frame) of the fourth joint: by adjusting its height, it is possible to avoid collisions with the patient and prevent potentially hazardous configurations during the scan. This component is computed using partial direct kinematics. The final two elements describe the orientation, defined using ZYZ Euler angles around the Z (phi) and Y (theta) axes. 
+The angles have been defined by equating the rotation matrix derived from the robot's direct kinematics from the robot’s base to the end-effector, with the composition of three elementary rotations around the moving ZYZ axes:
+$$
+R(\phi,\theta,\psi)=\begin{pmatrix}
+c_{\phi}c_{\theta}c_{\psi}-s_{\phi}s_{\psi} & -c_{\phi}c_{\theta}s_{\psi}-s_{\phi}c_{\psi} & c_{\phi}s_{\theta}\\
+s_{\phi}c_{\theta}c_{\psi}+c_{\phi}s_{\psi} & -s_{\phi}c_{\theta}s_{\psi}+c_{\phi}c_{\psi} & s_{\phi}s_{\theta}\\
+-s_{\theta}c_{\psi} & s_{\theta}s_{\psi} & c_{\theta}
+\end{pmatrix}
+$$
+Then the task vector is:
+\newline
+\noindent
+\begin{minipage}{0.4\textwidth}
+\hspace{1cm}
+   $
+    r=\begin{pmatrix}
+    x\\
+    y\\
+    z\\
+    \theta\\
+    z^{\text{4th}}\\
+    \phi
+    \end{pmatrix}
+    $
+\end{minipage}%
+\begin{minipage}{0.5\textwidth}
+    \centering
+    \includegraphics[width=0.8\textwidth]{Robot_standing.png}
+    \captionof{figure}{World Frame and End-effector frame}
+    \label{Robot_standing}
+\end{minipage}
+\vspace{1cm}
+\newline
+It is important to note that the final Euler angle ($\psi$) only describes the orientation around the probe's approach axis. In order to maintain a simpler Jacobian computation, the last rotation around the approach direction has not been used.
+\\
+The above mentioned definition has a singularity for $\theta = \pi$, that is when the z axis of the end-effector is vertical. To enable the use of this configuration during scans, a threshold has been implemented: when the configuration approaches $\theta = \pi$, the task over $\psi$ becomes ambiguous (is no longer possible to determine $\psi$ because of the representation singularity) and the gains of $\phi$ are set to zero to maintain a vertical approach direction for the end-effector and ignore the task for $\psi$. Several precautions have been taken in order to avoid sudden reconfigurations of the robot’s end-effector.
+\\
+To leverage the redundancy of the manipulator, a Task Augmentation technique was implemented, which involves extending the Analytic Jacobian to incorporate all tasks giving them equal priority.
+By doing so, the manipulator can handle multiple objectives simultaneously without compromising task performance, whenever the tasks are compatible with each other. This approach not only optimizes control but also enhances safety, as it reduces the risk of abrupt movements. The ability to manage competing tasks efficiently helps maintain smooth, stable operations, especially in safety-critical environments like teleoperated procedures or tasks involving human interaction.
+%%IMPEDENCE CONTROL DESIGN
+\subsection{Impedence control design}
+In tasks like teleoperated echography, it is essential to carefully control and minimize the interaction forces with the patient. To achieve this, an impedance control law was implemented with a specific configuration designed to further improve performance. The control law is designed to react to the error defined in Cartesian space ($e=r_{d}-r, \dot{e}=\dot{r}_{d}-\dot{r}$), by commanding the control input torque at the robot's joint level. It incorporates the dynamic model of the manipulator (excluding friction forces) to ensure the use of a reliable system model. The control law assumes the interaction model with the environment follows the relationship:
+$$
+M(q)\ddot{q}+S(q,\dot{q})\dot{q}+g=u+J_{r}(q)^{T}F_{r}
+$$
+Where $F_{r}$ represents the generalized forces exerting work on $ \dot{r}$.
+\\
+The resulting control law is as follows:
+$$
+u=M(q)J_{r}(q)^{\#}\{\ddot{r}_{d}-\dot{J}_{r}(q)\dot{q}+ M_{m}^{-1}[D_{m}(\dot{r}_{d}-\dot{r})+K_{m}(r_{d}-r)]\}+S(q,\dot{q})\dot{q}+g+J_{r}(q)^{T}[M_{r}(q)M_{m}^{-1}-I]F_{r}
+$$
+To reduce the complexity of the model and simplify the controller, a further simplification has been adopted by setting the apparent inertia matrix $M_{m}$ equal to the natural Cartesian inertia of the robot, $M_{m}=M_{r}(q)$. The control law then simplifies to:
+$$
+u=M(q)J_{r}(q)^{\#}\{\ddot{r}_{d}-\dot{J}_{r}(q)\dot{q}\}+S(q,\dot{q})\dot{q}+g+J_{r}(q)^{T}[D_{m}(\dot{r}_{d}-\dot{r})+K_{m}(r_{d}-r)]
+$$
+Additionally, a damping term for joint velocities is introduced to reduce excessive self-motion in the joint space, which could otherwise compromise safety of the patient. The final control law becomes:
+$$
+u=M(q)J_{r}(q)^{\#}\{\ddot{r}_{d}-\dot{J}_{r}(q)\dot{q}\}+S(q,\dot{q})\dot{q}+g+J_{r}(q)^{T}[D_{m}(\dot{r}_{d}-\dot{r})+K_{m}(r_{d}-r)]-D_{q}\dot{q}
+$$
+Where $K_{m}, D_{m}$ and $D_{q}$ are the diagonal, positive definite gain matrices.
+\\
+Particular precautions have been taken with the $K_{z}$ component of the gain matrix $K_{m}$. To achieve more compliant behavior along the $z$ axis (aligned with the probe), the value of $K_{z}$ is set lower than those of  $K_{x}$ and $K_{y}$, where less significant contact is expected. These adjustments help ensure a safer and more comfortable scan, maintaining the compliant behavior of the manipulator when interacting with the patient at all times.
+%%CONTROL MODALITIES
+\subsection{Control modalities}
+While predefined trajectories can be commanded, allowing the operator to make precise, fine adjustments to the end-effector’s pose can improve the quality of the scan and possibly yields better results. Specifically, the position and orientation of the robot’s end-effector can be modified in real time using external devices, such as an Xinput-compatible controller. This enables the operator to precisely adjust the echographic probe during the scan for more detailed analysis.
+\\
+Additionally, a GUI has been implemented to allow similar adjustments to the position and orientation using a mouse. Through the GUI, the operator can also adjust each component of the gain matrices $K_{m}, D_{m}$ and $D_{q}$ offering greater control over the system.
+\\
+Although the operator can manually adjust the end-effector’s position, several safety precautions have been implemented to ensure patient protection. Specifically, a shared control method has been introduced by setting a safety threshold: if the force sensor detects a force along the Z-axis exceeding this threshold, the control system prevents any further increase in force in that direction. Additionally, to avoid commanding a reference position too deep into the patient—which would generate excessive force—a maximum allowable distance between the end-effector and the patient has been established.
+
 
 \section{Conclusion}
 

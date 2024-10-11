@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.23)  28 SEP 2024 18:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.23)  11 OCT 2024 18:42
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -310,47 +310,67 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 Package: ulem 2019/11/18
 \ULdepth=\dimen163
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 21.
+(/usr/local/texlive/2022/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2022/03/01 v3.6b Customizing captions (AR)
+
+(/usr/local/texlive/2022/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2022/03/17 v2.3b caption3 kernel (AR)
+\caption@tempdima=\dimen164
+\captionmargin=\dimen165
+\caption@leftmargin=\dimen166
+\caption@rightmargin=\dimen167
+\caption@width=\dimen168
+\caption@indent=\dimen169
+\caption@parindent=\dimen170
+\caption@hangindent=\dimen171
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count283
+\c@continuedfloat=\count284
+Package caption Info: float package is loaded.
+Package caption Info: hyperref package is loaded.
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 22.
 
 (/usr/local/texlive/2022/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2022-02-07 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count283
+\l__color_backend_stack_int=\count285
 \l__pdf_internal_box=\box60
 )
 (./report.aux)
 \openout1 = `report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
 
 (/usr/local/texlive/2022/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count284
-\scratchdimen=\dimen164
+\scratchcounter=\count286
+\scratchdimen=\dimen172
 \scratchbox=\box61
-\nofMPsegments=\count285
-\nofMParguments=\count286
+\nofMPsegments=\count287
+\nofMParguments=\count288
 \everyMPshowfont=\toks27
-\MPscratchCnt=\count287
-\MPscratchDim=\dimen165
-\MPnumerator=\count288
-\makeMPintoPDFobject=\count289
+\MPscratchCnt=\count289
+\MPscratchDim=\dimen173
+\MPnumerator=\count290
+\makeMPintoPDFobject=\count291
 \everyMPtoPDFconversion=\toks28
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
@@ -361,7 +381,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring ON on input line 29.
+Package hyperref Info: Link coloring ON on input line 30.
 
 (/usr/local/texlive/2022/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
@@ -373,85 +393,110 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 ty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count290
+\c@section@level=\count292
 )
-LaTeX Info: Redefining \ref on input line 29.
-LaTeX Info: Redefining \pageref on input line 29.
-LaTeX Info: Redefining \nameref on input line 29.
+LaTeX Info: Redefining \ref on input line 30.
+LaTeX Info: Redefining \pageref on input line 30.
+LaTeX Info: Redefining \nameref on input line 30.
  (./report.out) (./report.out)
 \@outlinefile=\write3
 \openout3 = `report.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 31.
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 34.
 
 
 (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 31.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 34.
 
 
 (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1
+)
+<../images-videos//Approach.png, id=55, 625.58719pt x 803.25093pt>
+File: ../images-videos//Approach.png Graphic file (type png)
+<use ../images-videos//Approach.png>
+Package pdftex.def Info: ../images-videos//Approach.png  used on input line 38.
 
-{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./repo
-rt.toc)
+(pdftex.def)             Requested size: 140.92793pt x 180.94427pt.
+ [1
+
+{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <../imag
+es-videos//Approach.png>] (./report.toc)
 \tf@toc=\write4
 \openout4 = `report.toc'.
 
-
-[2]
-<../images-videos//TER.png, id=70, 1029.8475pt x 585.18625pt>
+ [2] [3]
+<../images-videos//TER.png, id=93, 1029.8475pt x 585.18625pt>
 File: ../images-videos//TER.png Graphic file (type png)
 <use ../images-videos//TER.png>
-Package pdftex.def Info: ../images-videos//TER.png  used on input line 53.
+Package pdftex.def Info: ../images-videos//TER.png  used on input line 71.
 (pdftex.def)             Requested size: 328.82707pt x 186.84375pt.
- [3 <../images-videos//TER.png>]
-<../images-videos//MELODY.png, id=78, 463.7325pt x 276.03125pt>
+ [4 <../images-videos//TER.png>]
+<../images-videos//MELODY.png, id=100, 463.7325pt x 276.03125pt>
 File: ../images-videos//MELODY.png Graphic file (type png)
 <use ../images-videos//MELODY.png>
-Package pdftex.def Info: ../images-videos//MELODY.png  used on input line 65.
+Package pdftex.def Info: ../images-videos//MELODY.png  used on input line 83.
 (pdftex.def)             Requested size: 328.82707pt x 195.73505pt.
- [4 <../images-videos//MELODY.png>]
-<../images-videos//OTELO.png, id=86, 853.1875pt x 259.97125pt>
+ [5 <../images-videos//MELODY.png>]
+<../images-videos//OTELO.png, id=108, 853.1875pt x 259.97125pt>
 File: ../images-videos//OTELO.png Graphic file (type png)
 <use ../images-videos//OTELO.png>
-Package pdftex.def Info: ../images-videos//OTELO.png  used on input line 83.
+Package pdftex.def Info: ../images-videos//OTELO.png  used on input line 101.
 (pdftex.def)             Requested size: 328.82707pt x 100.19832pt.
-<../images-videos//OTELO_structure.png, id=87, 680.5425pt x 443.6575pt>
+<../images-videos//OTELO_structure.png, id=109, 680.5425pt x 443.6575pt>
 File: ../images-videos//OTELO_structure.png Graphic file (type png)
 <use ../images-videos//OTELO_structure.png>
 Package pdftex.def Info: ../images-videos//OTELO_structure.png  used on input l
-ine 91.
+ine 109.
 (pdftex.def)             Requested size: 234.8775pt x 153.11615pt.
- [5 <../images-videos//OTELO.png> <../images-videos//OTELO_structure.png>] [6] 
-[7]
-(./report.aux)
+ [6 <../images-videos//OTELO.png> <../images-videos//OTELO_structure.png>] [7]
+<../images-videos//Robot_standing.png, id=123, 578.91281pt x 749.04843pt>
+File: ../images-videos//Robot_standing.png Graphic file (type png)
+<use ../images-videos//Robot_standing.png>
+Package pdftex.def Info: ../images-videos//Robot_standing.png  used on input li
+ne 156.
+(pdftex.def)             Requested size: 187.90271pt x 243.11783pt.
+
+
+Package caption Warning: The option `hypcap=true' will be ignored for this
+(caption)                particular \caption on input line 157.
+See the caption package documentation for explanation.
+
+[8 <../images-videos//Robot_standing.png>] [9] [10] [11] (./report.aux)
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: 8431A76DA4F4E367FE159EC621D9F52B;1335.
+(rerunfilecheck)             Checksum: 0633352C0CD6EAD4CB1B25C29FA02CF3;1806.
  ) 
 Here is how much of TeX's memory you used:
- 10397 strings out of 478268
- 158889 string characters out of 5846347
- 453919 words of memory out of 5000000
- 28434 multiletter control sequences out of 15000+600000
+ 11704 strings out of 478268
+ 184754 string characters out of 5846347
+ 478443 words of memory out of 5000000
+ 29724 multiletter control sequences out of 15000+600000
  478469 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,6n,63p,681b,449s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 60i,13n,63p,698b,391s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 }</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb>
 </usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><
 /usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></u
-sr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr
-/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/l
-ocal/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/loc
-al/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/
-texlive/2022/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on report.pdf (7 pages, 1581149 bytes).
+sr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></us
+r/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr
+/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/l
+ocal/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/loc
+al/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local
+/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/t
+exlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texl
+ive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive
+/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/
+2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/20
+22/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
+Output written on report.pdf (11 pages, 2350492 bytes).
 PDF statistics:
- 153 PDF objects out of 1000 (max. 8388607)
- 119 compressed objects within 2 object streams
- 25 named destinations out of 1000 (max. 500000)
- 101 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 221 PDF objects out of 1000 (max. 8388607)
+ 167 compressed objects within 2 object streams
+ 34 named destinations out of 1000 (max. 500000)
+ 135 words of extra memory for PDF output out of 10000 (max. 10000000)
 

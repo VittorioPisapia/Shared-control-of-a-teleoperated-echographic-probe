@@ -1,11 +1,14 @@
 \contentsline {section}{\numberline {1}Problem introduction}{3}{section.1}%
-\contentsline {section}{\numberline {2}State of the Art}{3}{section.2}%
-\contentsline {subsection}{\numberline {2.1}The TER system}{3}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}The MELODY system}{4}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}The OTELO system}{4}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}A previous project on related work}{6}{subsection.2.4}%
-\contentsline {paragraph}{Limitations:}{6}{paragraph*.1}%
-\contentsline {section}{\numberline {3}Development}{6}{section.3}%
-\contentsline {section}{\numberline {4}Conclusion}{6}{section.4}%
-\contentsline {section}{\numberline {5}Future works}{6}{section.5}%
-\contentsline {section}{References}{6}{section.5}%
+\contentsline {section}{\numberline {2}State of the Art}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}The TER system}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}The MELODY system}{5}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}The OTELO system}{5}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}A previous project on related work}{7}{subsection.2.4}%
+\contentsline {paragraph}{Limitations:}{7}{paragraph*.6}%
+\contentsline {section}{\numberline {3}Development}{7}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Task definition}{7}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Impedence control design}{9}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Control modalities}{10}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Conclusion}{11}{section.4}%
+\contentsline {section}{\numberline {5}Future works}{11}{section.5}%
+\contentsline {section}{References}{11}{section.5}%
