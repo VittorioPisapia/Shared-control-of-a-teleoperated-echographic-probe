@@ -26,19 +26,19 @@ Although the operator can manually adjust the end-effector’s position, several
 ### Echo Mode
 
 <p align="center">
-    <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/echo.gif" alt="Example Image" style="width:600px;"/>
+    <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/echo.gif" alt="Example Image" style="width:660px;"/>
 </p>
 
 ### Linear Trajectory
 
 <p align="center">
-    <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/linear.gif" alt="Example Image" style="width:600px;"/>
+    <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/linear.gif" alt="Example Image" style="width:660px;"/>
 </p>
 
 ### Wrist Trajectory
 
 <p align="center">
-    <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/wrist.gif" alt="Example Image" style="width:600px;"/>
+    <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/wrist.gif" alt="Example Image" style="width:660px;"/>
 </p>
 
 
