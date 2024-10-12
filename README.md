@@ -24,10 +24,7 @@ The position and orientation of the robot’s end-effector can be modified in re
 
 ### Shared control
 
-![freemotion](
 Although the operator can manually adjust the end-effector’s position, several safety precautions have been implemented to ensure patient protection. Specifically, a shared control protocol has been introduced by setting a safety threshold: if the force sensor detects a force along the Z-axis exceeding this threshold, the control system prevents any further increase in force in that direction
 
 
 
-
- <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Robot_with_RF.png" alt="Example Image" style="width:400px;"/>
