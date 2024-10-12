@@ -10,11 +10,6 @@ This work focuses on developing a shared control system for a teleoperated echog
 
 ## Task definition
 
-<p align="center">
-    <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Robot_with_RF.png" alt="Example Image" style="width:300px;"/>
-</p>
-
-
 The task vector is defined as a 6-component vector. The first three components represent the x, y, and z cartesian coordinates of the end-effector, which are determined using the robot’s direct kinematics. The fourth element corresponds to the z-coordinate (expressed in the world frame) of the fourth joint: by adjusting its height, it is possible to avoid collisions with the patient and prevent potentially hazardous configurations during the scan. The final two elements describe the orientation, defined using ZYZ Euler angles around the Z (phi) and Y (theta) axes.
 
 
