@@ -1,6 +1,8 @@
 # Shared control of a teleoperated echographic probe
 
-
+<p align="center">
+    <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/1_freemotion.gif" alt="Example Image" style="width:450px;"/>
+</p>
 <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/1_freemotion.gif" alt="Example Image" style="width:450px;"/>
 
 
