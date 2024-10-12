@@ -7,8 +7,8 @@ This work focuses on developing a shared control system for a teleoperated echog
 
  <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Robot_with_RF.png" alt="Example Image" style="width:300px;"/>
 
- <div style="text-align: center;">
-    <img src="[URL_to_your_image](https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Robot_with_RF.png)" alt="description" width="300" />
+<div style="text-align: center;">
+    <img src="[URL_to_your_image](https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Robot_with_RF.png)" alt="description" width="300" height="200" />
 </div>
 
 To ensure a safe and accurate scan, the task vector is defined as a 6-component vector. The first three 
