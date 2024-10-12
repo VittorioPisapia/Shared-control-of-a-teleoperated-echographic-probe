@@ -11,7 +11,7 @@ This work focuses on developing a shared control system for a teleoperated echog
 ## Task definition
 
 <p align="center">
-    <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Robot_with_RF.png" alt="Example Image" style="width:450px;"/>
+    <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Robot_with_RF.png" alt="Example Image" style="width:300px;"/>
 </p>
 
 
