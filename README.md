@@ -5,7 +5,11 @@ This work focuses on developing a shared control system for a teleoperated echog
 
 ## Control Modalities
 
-<img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Robot_with_RF.png" alt="Example Image" style="width:300px;"/>
+ <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Robot_with_RF.png" alt="Example Image" style="width:300px;"/>
+
+ <div style="text-align: center;">
+    <img src="[URL_to_your_image](https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Robot_with_RF.png)" alt="description" width="300" />
+</div>
 
 To ensure a safe and accurate scan, the task vector is defined as a 6-component vector. The first three 
 components represent the x, y, and z cartesian coordinates of the end-effector, which are determined using
