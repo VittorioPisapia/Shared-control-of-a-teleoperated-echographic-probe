@@ -86,4 +86,5 @@ Join us in shaping the future of robotic healthcare!
 
 ## How to run the code
 1. Install the dependancies
-2. Run `main.m`
+2. Set the CoppeliaSim scene
+3. Run `main.m`placed in `MATLAB_code`
