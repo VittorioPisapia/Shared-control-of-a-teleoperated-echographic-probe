@@ -78,9 +78,9 @@ This project showcases the power of **shared control** in a teleoperated echogra
 
 This approach enables seamless collaboration, combining **human intuition** with **robotic precision**, offering:
 
--Enhanced safety in delicate medical procedures.
--Greater operator comfort and reduced fatigue.
--More precise outcomes in real-time medical applications.
+*Enhanced safety in delicate medical procedures.
+*Greater operator comfort and reduced fatigue.
+*More precise outcomes in real-time medical applications.
 Join us in shaping the future of robotic healthcare!
 
 ## How to run the code
