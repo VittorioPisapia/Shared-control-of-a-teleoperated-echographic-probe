@@ -53,14 +53,14 @@ This project showcases the power of **shared control** in a teleoperated echogra
 
 ## Key Features 🚀
 
--**Real-time Control**: Precise positioning and orientation adjustments using an external controller.
--**Intelligent Safety Protocols**: Built-in force-sensing to prevent excessive pressure during scans.
--**Advanced Trajectories**: Autonomous and guided paths for smooth, accurate scanning.
+- **Real-time Control**: Precise positioning and orientation adjustments using an external controller.
+- **Intelligent Safety Protocols**: Built-in force-sensing to prevent excessive pressure during scans.
+- **Advanced Trajectories**: Autonomous and guided paths for smooth, accurate scanning.
 
 ## Control Modes
 
-**1. Manual Control**: Operator adjusts probe position with fine-tuned real-time input.
-**2. Shared Control**: Automatically regulates movements to avoid risks and ensure safe operation.
+1. **Manual Control**: Operator adjusts probe position with fine-tuned real-time input.
+2. **Shared Control**: Automatically regulates movements to avoid risks and ensure safe operation.
 
 ## Trajectory Modes
 
@@ -78,9 +78,9 @@ This project showcases the power of **shared control** in a teleoperated echogra
 
 This approach enables seamless collaboration, combining **human intuition** with **robotic precision**, offering:
 
-*Enhanced safety in delicate medical procedures.
-*Greater operator comfort and reduced fatigue.
-*More precise outcomes in real-time medical applications.
+- Enhanced safety in delicate medical procedures.
+- Greater operator comfort and reduced fatigue.
+- More precise outcomes in real-time medical applications.
 Join us in shaping the future of robotic healthcare!
 
 ## How to run the code
