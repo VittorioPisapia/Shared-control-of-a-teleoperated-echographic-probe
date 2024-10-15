@@ -42,7 +42,7 @@ This approach enables seamless collaboration, combining **human intuition** with
 Join us in shaping the future of robotic healthcare!
 
 ## How to run the code
-1. Install the dependancies (Simulink 3D Animation)
+1. Install all the requirements (check `requirements.txt`)
 2. Set the CoppeliaSim scene and set as **Dynamic engine** 'Bullet 2.78'
 3. Run `main.m`placed in `MATLAB_code`
    
