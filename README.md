@@ -17,7 +17,7 @@ This project showcases the power of **shared control** in a teleoperated echogra
 ## Control Modes
 
 1. **Manual Control**: Operator adjusts probe position with fine-tuned real-time input.
-2. **Shared Control**: Automatically regulates movements to avoid risks and ensure safe operation.
+2. **Trajectories**: Excecutes predefined trajectories in order to avoid risks and ensure safe operation.
 
 ## Trajectory Modes
 
@@ -42,6 +42,8 @@ This approach enables seamless collaboration, combining **human intuition** with
 Join us in shaping the future of robotic healthcare!
 
 ## How to run the code
-1. Install the dependancies
-2. Set the CoppeliaSim scene
+1. Install the dependancies (Simulink 3D Animation)
+2. Set the CoppeliaSim scene and set as **Dynamic engine** 'Bullet 2.78'
 3. Run `main.m`placed in `MATLAB_code`
+   
+   Unfortunately, there is a known bug when running MATLAB code simultenously with Coppeliasim during the inizialization of transmission channels for the datas. The very first run will always fail, resulting in a error in Coppeliasim. To overcome this problem, it is possible to simply terminate the simulation in both MATLAB and Coppeliasim and rerun the simulation.
