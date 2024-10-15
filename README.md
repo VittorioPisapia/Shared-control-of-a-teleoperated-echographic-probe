@@ -39,7 +39,7 @@ This approach enables seamless collaboration, combining **human intuition** with
 - Greater operator comfort and reduced fatigue.
 - More precise outcomes in real-time medical applications.
 
-# **Join us in shaping the future of robotic healthcare!**
+Join us in shaping the future of robotic healthcare!
 
 ## How to run the code
 1. Install the dependancies (Simulink 3D Animation)
