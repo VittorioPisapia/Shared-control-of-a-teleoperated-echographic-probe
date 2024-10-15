@@ -1,5 +1,8 @@
 # Shared control of a teleoperated echographic probe
 
+## Table of contents
+- [Revolutionizing Medical Robotics with Shared Control](#revolutionizing-medical-robotics-with-shared-control)
+
 <p align="center">
     <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Free2.gif" alt="Example Image" style="width:660px;"/>
 </p>
