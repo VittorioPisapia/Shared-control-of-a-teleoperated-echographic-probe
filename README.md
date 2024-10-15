@@ -43,7 +43,7 @@ Join us in shaping the future of robotic healthcare!
 
 ## How to run the code
 1. Install all the requirements (check `requirements.txt`)
-2. Set the CoppeliaSim scene and set as **Dynamic engine** 'Bullet 2.78'
+2. Set the CoppeliaSim scene and set as **Dynamic engine** '*Bullet 2.78*'
 3. Run `main.m`placed in `MATLAB_code`
    
    Unfortunately, there is a known bug when running MATLAB code simultenously with Coppeliasim during the inizialization of transmission channels for the datas. The very first run will always fail, resulting in a error in Coppeliasim. To overcome this problem, it is possible to simply terminate the simulation in both MATLAB and Coppeliasim and rerun the simulation.
