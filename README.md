@@ -21,6 +21,8 @@ This project showcases the power of **shared control** in a teleoperated echogra
 
 ## Trajectory Modes
 
+Detailed description for each trajectories can be found in `Report_PDF.pdf` placed in `Presentation` folder
+
 ### Echo Mode
 <p align="center"> <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/echo.gif" alt="Echo Mode" style="width:660px;"/> </p>
 
