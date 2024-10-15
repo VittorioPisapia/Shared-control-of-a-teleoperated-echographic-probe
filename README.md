@@ -2,6 +2,11 @@
 
 ## Table of contents
 - [Revolutionizing Medical Robotics with Shared Control](#revolutionizing-medical-robotics-with-shared-control)
+- [Key Features 🚀](#key-features-🚀)
+- [Control Modes](#control-modes)
+- [Trajectory Modes](#trajectories-modes)
+- [Why Shared Control?](#why-shared-control?)
+- [How to run the code](#how-to-run-the-code)
 
 <p align="center">
     <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Free2.gif" alt="Example Image" style="width:660px;"/>
