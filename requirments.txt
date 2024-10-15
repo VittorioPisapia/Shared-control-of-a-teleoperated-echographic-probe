@@ -1,0 +1,4 @@
+CoppeliaSim (Tested on version 4.7.0)
+MATLAB (Tested on R2023b)
+Simulink 3D Animation Toolbox for MATLAB
+Symbolic Math Toolbox for MATLAB
