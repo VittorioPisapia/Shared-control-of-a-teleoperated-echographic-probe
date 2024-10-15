@@ -30,14 +30,14 @@ This project showcases the power of **shared control** in a teleoperated echogra
 Detailed description for each trajectories can be found in `Report_PDF.pdf` placed in `Presentation` folder.
 
 ### Echo Mode
-<p align="center"> <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/echo.gif" alt="Echo Mode" style="width:660px;"/> </p>
+<p align="center"> <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/echo_fast.gif" alt="Echo Mode" style="width:660px;"/> </p>
 
 
 ### Linear Trajectory
-<p align="center"> <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/linear.gif" alt="Linear Trajectory" style="width:660px;"/> </p>
+<p align="center"> <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/linear_fast.gif" alt="Linear Trajectory" style="width:660px;"/> </p>
 
 ### Wrist Trajectory
-<p align="center"> <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/wrist.gif" alt="Wrist Trajectory" style="width:660px;"/> </p>
+<p align="center"> <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/wrist_fast.gif" alt="Wrist Trajectory" style="width:660px;"/> </p>
 
 ## Why Shared Control?
 
