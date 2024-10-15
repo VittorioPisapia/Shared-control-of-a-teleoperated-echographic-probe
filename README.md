@@ -1,7 +1,7 @@
 # Shared control of a teleoperated echographic probe
 ## Table of contents
 - [Revolutionizing Medical Robotics with Shared Control](#revolutionizing-medical-robotics-with-shared-control)
-- [Key Features](#key-features)
+- [Key Features 🚀](#key-features)
 - [Control Modes](#control-modes)
 - [Trajectory Modes](#trajectory-modes)
 - [Why Shared Control](#why-shared-control)
@@ -14,7 +14,7 @@
 
 This project showcases the power of **shared control** in a teleoperated echographic probe, integrated with the advanced **Franka Emika Panda Robot**. By leveraging **impedance control laws** and intelligent safety protocols, this system enhances the collaboration between human operators and robotic manipulators—offering a new level of precision and safety in medical imaging.
 
-## Key Features
+## Key Features 🚀
 
 - **Real-time Control**: Precise positioning and orientation adjustments using an external controller.
 - **Intelligent Safety Protocols**: Built-in force-sensing to prevent excessive pressure during scans.
