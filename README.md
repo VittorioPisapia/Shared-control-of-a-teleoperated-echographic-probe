@@ -14,7 +14,7 @@
 
 This project showcases the power of **shared control** in a teleoperated echographic probe, integrated with the advanced **Franka Emika Panda Robot**. By leveraging **impedance control laws** and intelligent safety protocols, this system enhances the collaboration between human operators and robotic manipulators—offering a new level of precision and safety in medical imaging.
 
-## Key Features 🚀
+## Key Features
 
 - **Real-time Control**: Precise positioning and orientation adjustments using an external controller.
 - **Intelligent Safety Protocols**: Built-in force-sensing to prevent excessive pressure during scans.
