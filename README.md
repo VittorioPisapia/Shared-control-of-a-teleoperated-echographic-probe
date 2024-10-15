@@ -3,8 +3,8 @@
 - [Revolutionizing Medical Robotics with Shared Control](#revolutionizing-medical-robotics-with-shared-control)
 - [Key Features 🚀](#key-features)
 - [Control Modes](#control-modes)
-- [Trajectory Modes](#trajectories-modes)
-- [Why Shared Control?](#why-shared-control?)
+- [Trajectory Modes](#trajectory-modes)
+- [Why Shared Control](#why-shared-control)
 - [How to run the code](#how-to-run-the-code)
 
 ## Revolutionizing Medical Robotics with Shared Control
