@@ -1,7 +1,7 @@
 # Shared control of a teleoperated echographic probe
 ## Table of contents
 - [Revolutionizing Medical Robotics with Shared Control](#revolutionizing-medical-robotics-with-shared-control)
-- [Key Features 🚀](#key-features)
+- [Key Features](#key-features)
 - [Control Modes](#control-modes)
 - [Trajectory Modes](#trajectory-modes)
 - [Why Shared Control](#why-shared-control)
