@@ -9,7 +9,7 @@
 
 ## Revolutionizing Medical Robotics with Shared Control
 <p align="center">
-    <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/Free2.gif" alt="Example Image" style="width:660px;"/>
+    <img src="https://github.com/VittorioPisapia/Shared-control-of-a-teleoperated-echographic-probe/blob/main/images-videos/free_fast.gif" alt="Example Image" style="width:660px;"/>
 </p>
 
 This project showcases the power of **shared control** in a teleoperated echographic probe, integrated with the advanced **Franka Emika Panda Robot**. By leveraging **impedance control laws** and intelligent safety protocols, this system enhances the collaboration between human operators and robotic manipulators—offering a new level of precision and safety in medical imaging.
