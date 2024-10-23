@@ -57,3 +57,6 @@ Join us in shaping the future of robotic healthcare!
 There is a known bug that occurs when running MATLAB code simultaneously with CoppeliaSim during the initialization of transmission channels for data. The first run will always fail, resulting in an error in CoppeliaSim.
 
 To resolve this issue, you can terminate the simulation in both MATLAB and CoppeliaSim, and then restart the simulation.
+
+
+Thanks to GamePad Viewer for the controller's overlay!
